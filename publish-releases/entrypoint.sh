@@ -121,10 +121,10 @@ function publish(){
     fi
   }
 
+  echo "@resideo:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" > ~/.npmrc
   install_with_CLI
   touch ~/published.json
   echo '{"packages":[]}' > ~/published.json
-  echo "@resideo:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" > ~/.npmrc
 
   for package in ${publish_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
@@ -149,18 +149,18 @@ function publish(){
 }
 
 function commit_push(){
-    published_packages=($(echo $(jq '.packages|.[]' $HOME/published.json))) 
-    if [ "${#published_packages[@]}" = "0" ]; then
-      echo -e "${RED}We did not publish any packages so there is nothing to push back to the repository...${NC}"
+  published_packages=($(echo $(jq '.packages|.[]' $HOME/published.json))) 
+  if [ "${#published_packages[@]}" = "0" ]; then
+    echo -e "${RED}We did not publish any packages so there is nothing to push back to the repository...${NC}"
+  else
+    if [ "${#published_packages[@]}" = "1" ]; then
+      commit_message="Update package.json file"
     else
-      if [ "${#published_packages[@]}" = "1" ]; then
-        commit_message="Update package.json file"
-      else
-        commit_message="Update package.json files"
-      fi
-      git commit -m "$commit_message" -m "$(echo ${published_packages[@]} | sed 's: :, :g' | sed 's:"::g')"
-      git push origin HEAD:$branch
+      commit_message="Update package.json files"
     fi
+    git commit -m "$commit_message" -m "$(echo ${published_packages[@]} | sed 's: :, :g' | sed 's:"::g')"
+    git push origin HEAD:$branch
+  fi
 }
 
 git_setup
