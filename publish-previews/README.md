@@ -29,7 +29,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Publish Previews
-      uses: resideo/actions/publish-preview@v1.2
+      uses: resideo/actions/publish-previews@v1.2
       with:
         NPM_PUBLISH: npm run my-script
         IGNORE: folder/example_package folder/example_package2
