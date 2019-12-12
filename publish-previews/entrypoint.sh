@@ -34,7 +34,10 @@ function publish(){
   echo '{"tag":"","packages":[],"error":{"name":"","directory":""}}' > published.json
   echo $(jq --arg BRANCH "$tag" '.tag = $BRANCH' published.json) > published.json
 
-  echo "@resideo:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+  echo "@resideo:registry=https://npm.pkg.github.com" >> ~/.npmrc
+  echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+  echo "unsafe-perm=true" >> ~/.npmrc
+  
   install_with_CLI
 
   for dir in ${confirmed_directories_array[@]}; do
