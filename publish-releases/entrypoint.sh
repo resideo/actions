@@ -121,7 +121,10 @@ function publish(){
     fi
   }
 
-  echo "@resideo:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+  echo "@resideo:registry=https://npm.pkg.github.com" >> ~/.npmrc
+  echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+  echo "unsafe-perm=true" >> ~/.npmrc
+
   install_with_CLI
   touch ~/published.json
   echo '{"packages":[]}' > ~/published.json
