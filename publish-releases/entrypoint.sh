@@ -142,11 +142,11 @@ function publish(){
       publish_command --access=public
       git add package.json
       echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package}${GREEN}!${NC}"
+      echo $(jq --arg PKG "$package_name" '.packages[.packages | length] |= . + $PKG' $HOME/published.json) > ~/published.json
     else
      echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
     fi
 
-    echo $(jq --arg PKG "$package_name" '.packages[.packages | length] |= . + $PKG' $HOME/published.json) > ~/published.json
     cd $GITHUB_WORKSPACE
   done
 }
