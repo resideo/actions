@@ -251,6 +251,7 @@ function remove_npmrc(){
     echo -e "${YELLOW}.npmrc detected: Removing npmrc file from repository...${NC}"
     rm .npmrc
   fi
+  ls
   check_prerequisites
 }
 
