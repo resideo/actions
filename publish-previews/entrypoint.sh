@@ -246,4 +246,12 @@ EOT
   fi
 }
 
-check_prerequisites
+function remove_npmrc(){
+  if [ -f ".npmrc" ]; then
+    echo -e "${YELLOW}.npmrc detected: Removing npmrc file from repository...${NC}"
+    rm .npmrc
+  fi
+  check_prerequisites
+}
+
+remove_npmrc
