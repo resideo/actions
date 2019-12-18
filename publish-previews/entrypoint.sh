@@ -12,6 +12,7 @@ function run_danger(){
   yarn global add danger --dev
   export PATH="$(yarn global bin):$PATH"
   echo -e "${BLUE}Running Danger CI..${NC}"
+  remove_npmrc
   danger ci
 }
 
@@ -37,6 +38,8 @@ function publish(){
   echo "@resideo:registry=https://npm.pkg.github.com" >> ~/.npmrc
   echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
   echo "unsafe-perm=true" >> ~/.npmrc
+
+  remove_npmrc
   
   install_with_CLI
 
@@ -251,7 +254,6 @@ function remove_npmrc(){
     echo -e "${YELLOW}.npmrc detected: Removing npmrc file from repository...${NC}"
     rm .npmrc
   fi
-  check_prerequisites
 }
 
-remove_npmrc
+check_prerequisites
