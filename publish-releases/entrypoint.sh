@@ -132,17 +132,17 @@ function publish(){
   for package in ${publish_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
 
-    package_name="`node -e \"console.log(require('./package.json').name)\"`"
-    echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
-
-    version_bumper
-    version="`node -e \"console.log(require('./package.json').version)\"`"
-
     is_private=$(echo $(jq '.private' package.json))
 
     if [ "$is_private" = "true" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because package is marked as private and therefore not intended to be published.${NC}"
     else
+      package_name="`node -e \"console.log(require('./package.json').name)\"`"
+      echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
+
+      version_bumper
+      version="`node -e \"console.log(require('./package.json').version)\"`"
+
       if [ -z "$(npm view ${package_name}@${version})" ]; then
         publish_command --access=public
         git add package.json
