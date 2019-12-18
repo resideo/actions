@@ -132,19 +132,25 @@ function publish(){
   for package in ${publish_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
 
-    package_name="`node -e \"console.log(require('./package.json').name)\"`"
-    echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
+    is_private=$(echo $(jq '.private' package.json))
 
-    version_bumper
-    version="`node -e \"console.log(require('./package.json').version)\"`"
-
-    if [ -z "$(npm view ${package_name}@${version})" ]; then
-      publish_command --access=public
-      git add package.json
-      echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package}${GREEN}!${NC}"
-      echo $(jq --arg PKG "$package_name" '.packages[.packages | length] |= . + $PKG' $HOME/published.json) > ~/published.json
+    if [ "$is_private" = "true" ]; then
+      echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because package is marked as private and therefore not intended to be published.${NC}"
     else
-     echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
+      package_name="`node -e \"console.log(require('./package.json').name)\"`"
+      echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
+
+      version_bumper
+      version="`node -e \"console.log(require('./package.json').version)\"`"
+
+      if [ -z "$(npm view ${package_name}@${version})" ]; then
+        publish_command --access=public
+        git add package.json
+        echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package}${GREEN}!${NC}"
+        echo $(jq --arg PKG "$package_name" '.packages[.packages | length] |= . + $PKG' $HOME/published.json) > ~/published.json
+      else
+      echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
+      fi
     fi
 
     cd $GITHUB_WORKSPACE
