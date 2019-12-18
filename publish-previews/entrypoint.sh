@@ -47,7 +47,7 @@ function publish(){
     json_count=${#json_within[@]};
     is_private=$(echo $(jq '.private' package.json))
 
-    pkgname="`node -e \"console.log(require('./package.json').name)\"`"
+    pkgname="`node -e \"console.log(require('./package.json').version)\"`"
 
     if [ "$json_count" != "1" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because there is a sub-package.${NC}"
@@ -63,8 +63,10 @@ function publish(){
       else
         $INPUT_NPM_PUBLISH --access=public --tag $tag
       fi
-      
-      echo $(jq --arg PKG "$pkgname" '.packages[.packages | length] |= . + {"name": $PKG}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
+
+      pkgver="`node -e \"console.log(require('./package.json').version)\"`"
+
+      echo $(jq --arg PKG "$pkgname" --arg VER "$pkgver" '.packages[.packages | length] |= . + {"name": $PKG, "version": $VER}' $GITHUB_WORKSPACE/published.json) > $GITHUB_WORKSPACE/published.json
     fi
 
     cd $GITHUB_WORKSPACE
@@ -86,13 +88,11 @@ const pjson = require('./published.json');
 const branch = process.env.GITHUB_HEAD_REF;
 const masked = branch.replace(/\//g, '_');
 
-const install_version = `npm install ${pjson.packages[0].name}@${pjson.packages[0].version}`;
-
 const first_line = `A preview package of this pull request has been published with the tag \`${masked}\`.`;
 const second_line = `You can try it out by running the following command:`;
-const install_tag = `$ npm install ${pjson.packages[0].name}@${masked}`;
+const install_tag = `$ npm install ${pjson.packages[0].name}@${pjson.packages[0].version}`;
 const fourth_line = `or by updating your package.json to:`
-const update_json = `\{\n  \"${pjson.packages[0].name}\": \"${masked}\"\n\}`
+const update_json = `\{\n  \"${pjson.packages[0].name}\": \"${pjson.packages[0].version}\"\n\}`
 
 markdown(`${first_line}\n${second_line}\n\`\`\`bash\n${install_tag}\n\`\`\`\n${fourth_line}\n\`\`\`bash\n${update_json}\n\`\`\``)
 EOT
@@ -101,13 +101,13 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 const pjson = require('./published.json');
 
-let packages = pjson.packages.reduce((acc, item) => acc + package(item.name), '');
+let packages = pjson.packages.reduce((acc, item) => acc + package(item.name, item.version), '');
 
-function package(name){
+function package(name, version){
   const first_line = `Install using the following command:`
-  const install_tag = `$ npm install ${name}@${pjson.tag}`
+  const install_tag = `$ npm install ${name}@${version}`
   const or_line = `Or update your package.json file:`
-  const json_line = `\"${name}\": \"${pjson.tag}\"`
+  const json_line = `\"${name}\": \"${version}\"`
 
   return `<details><summary>${name}</summary>
   
