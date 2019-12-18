@@ -85,10 +85,7 @@ cat << "EOT" > dangerfile.js
 const { markdown } = require('danger');
 const pjson = require('./published.json');
 
-const branch = process.env.GITHUB_HEAD_REF;
-const masked = branch.replace(/\//g, '_');
-
-const first_line = `A preview package of this pull request has been published with the tag \`${masked}\`.`;
+const first_line = `A preview package of this pull request has been published.`;
 const second_line = `You can try it out by running the following command:`;
 const install_tag = `$ npm install ${pjson.packages[0].name}@${pjson.packages[0].version}`;
 const fourth_line = `or by updating your package.json to:`
