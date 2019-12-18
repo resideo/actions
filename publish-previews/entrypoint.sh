@@ -47,7 +47,7 @@ function publish(){
     json_count=${#json_within[@]};
     is_private=$(echo $(jq '.private' package.json))
 
-    pkgname="`node -e \"console.log(require('./package.json').version)\"`"
+    pkgname="`node -e \"console.log(require('./package.json').name)\"`"
 
     if [ "$json_count" != "1" ]; then
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because there is a sub-package.${NC}"
