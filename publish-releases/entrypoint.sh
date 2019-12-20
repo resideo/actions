@@ -7,6 +7,13 @@ YELLOW='\033[1;33m'
 BLUE='\033[1;34m'
 NC='\033[0m'
 
+function remove_npmrc(){
+  if [ -f ".npmrc" ]; then
+    echo -e "${YELLOW}.npmrc detected: Removing npmrc file from repository...${NC}"
+    rm .npmrc
+  fi
+}
+
 function git_setup(){
   git remote set-url origin https://x-oauth-basic:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
   git fetch origin +refs/heads/*:refs/heads/*
@@ -109,10 +116,6 @@ function publish(){
     fi
   }
 
-  function version_bumper(){
-    npm version major
-  }
-
   function publish_command(){
     if [ "${#INPUT_NPM_PUBLISH}" = "0" ]; then
       npm publish
@@ -125,9 +128,8 @@ function publish(){
   echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
   echo "unsafe-perm=true" >> ~/.npmrc
 
+  remove_npmrc
   install_with_CLI
-  touch ~/published.json
-  echo '{"packages":[]}' > ~/published.json
 
   for package in ${publish_directories[@]}; do
     cd $GITHUB_WORKSPACE/$package
@@ -138,18 +140,15 @@ function publish(){
       echo -e "${RED}Skipping publishing process for: ${YELLOW}$dir${RED} because package is marked as private and therefore not intended to be published.${NC}"
     else
       package_name="`node -e \"console.log(require('./package.json').name)\"`"
-      echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
-
-      version_bumper
       version="`node -e \"console.log(require('./package.json').version)\"`"
+      echo -e "${GREEN}Running publishing process for: ${YELLOW}$package_name${NC}"
 
       if [ -z "$(npm view ${package_name}@${version})" ]; then
         publish_command --access=public
-        git add package.json
         echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package}${GREEN}!${NC}"
-        echo $(jq --arg PKG "$package_name" '.packages[.packages | length] |= . + $PKG' $HOME/published.json) > ~/published.json
       else
-      echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
+        echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
+        echo -e "${BLUE}Tip:${YELLOW}To publish the changes of this commit, you must update package version in the package.json file.${NC}"
       fi
     fi
 
@@ -157,22 +156,6 @@ function publish(){
   done
 }
 
-function commit_push(){
-  published_packages=($(echo $(jq '.packages|.[]' $HOME/published.json))) 
-  if [ "${#published_packages[@]}" = "0" ]; then
-    echo -e "${RED}We did not publish any packages so there is nothing to push back to the repository...${NC}"
-  else
-    if [ "${#published_packages[@]}" = "1" ]; then
-      commit_message="Update package.json file"
-    else
-      commit_message="Update package.json files"
-    fi
-    git commit -m "$commit_message" -m "$(echo ${published_packages[@]} | sed 's: :, :g' | sed 's:"::g')"
-    git push origin HEAD:$branch
-  fi
-}
-
 git_setup
 get_directories
 publish
-commit_push
