@@ -145,9 +145,9 @@ function publish(){
 
       if [ -z "$(npm view ${package_name}@${version})" ]; then
         publish_command --access=public
-        echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package}${GREEN}!${NC}"
+        echo -e "${GREEN}Successfully published version ${BLUE}${version}${GREEN} of ${BLUE}${package_name}${GREEN}!${NC}"
       else
-        echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package${RED} already exists.${NC}"
+        echo -e "${RED}Version ${YELLOW}$version${RED} of ${YELLOW}$package_name${RED} already exists.${NC}"
         echo -e "${BLUE}Tip:${YELLOW}To publish the changes of this commit, you must update package version in the package.json file.${NC}"
       fi
     fi
