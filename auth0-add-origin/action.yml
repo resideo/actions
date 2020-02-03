@@ -16,7 +16,8 @@ inputs:
   callbackUrl:
     description: "The allowed callback URL to add. Will fallback to origin if not provided"
     required: false
-  logoutUrl: "The allowed logout URL to add. Will fallback to origin if not provided"
+  logoutUrl:
+    description: "The allowed logout URL to add. Will fallback to origin if not provided"
     required: false
 runs:
   using: 'node12'
