@@ -1,0 +1,9 @@
+name: 'Auth0 Management'
+description: 'Auth0 Management API Actions'
+inputs:
+  command:
+    description: 'add-origin | remove-origin'
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
