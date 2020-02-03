@@ -4,11 +4,14 @@ inputs:
   domain:
     description: "Auth0 domain (tenant)"
     required: true
-  clientId:
-    description: "Auth0 Client ID"
+  apiClientId:
+    description: "Auth0 Client ID for the M2M API application"
     required: true
-  clientSecret:
-    description: "Auth0 Client Secret"
+  apiClientSecret:
+    description: "Auth0 Client Secret for the M2M API application"
+    required: true
+  clientId:
+    description: "Auth0 Client ID of the application to be updated"
     required: true
   origin:
     description: "The allowed web origin to remove"

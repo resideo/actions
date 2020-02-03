@@ -4,17 +4,24 @@ import { interpolate } from "@resideo/actions-core-interpolate-config";
 
 interface Args {
   domain: string;
+  apiClientId: string;
+  apiClientSecret: string;
   clientId: string;
-  clientSecret: string;
   origin: string;
 }
 
-async function main({ domain, clientId, clientSecret, origin }: Args) {
+async function main({
+  domain,
+  apiClientId,
+  apiClientSecret,
+  clientId,
+  origin
+}: Args) {
   try {
     const auth0 = createClient({
       domain,
-      clientId,
-      clientSecret
+      clientId: apiClientId,
+      clientSecret: apiClientSecret
     });
 
     await removeOrigin(auth0, {
@@ -30,7 +37,8 @@ async function main({ domain, clientId, clientSecret, origin }: Args) {
 
 main({
   domain: core.getInput("domain"),
+  apiClientId: core.getInput("apiClientId"),
+  apiClientSecret: core.getInput("apiClientSecret"),
   clientId: core.getInput("clientId"),
-  clientSecret: core.getInput("clientSecret"),
   origin: core.getInput("origin")
 });
