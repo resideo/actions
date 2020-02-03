@@ -14,10 +14,8 @@ interface RemoveOriginConfig {
   origin: string;
 }
 
-const appendUrl = (urls: string[] | undefined, url: string) => [
-  ...(urls || []),
-  url
-];
+const appendUrl = (urls: string[] | undefined, url: string) =>
+  urls?.includes(url) ? urls : [...(urls || []), url];
 
 const removeUrl = (urls: string[] | undefined, url: string) =>
   (urls || []).filter(x => !x.includes(url));
