@@ -22,8 +22,10 @@ const appendUrl = (urls: string[] | undefined, url: string) => [
 const removeUrl = (urls: string[] | undefined, url: string) =>
   (urls || []).filter(x => !x.includes(url));
 
-export const createClient = (options: ManagementClientOptions) =>
-  new ManagementClient(options);
+export const createClient = (
+  options: ManagementClientOptions,
+  scope = "read:clients update:clients"
+) => new ManagementClient({ ...options, scope });
 
 export const addOrigin = async (
   auth0: ManagementClient,

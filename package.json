@@ -4,7 +4,9 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "actions/auth0-mgmt"
+      "auth0-add-origin",
+      "auth0-remove-origin",
+      "core/*"
     ]
   },
   "eslintConfig": {
@@ -16,7 +18,9 @@
     ]
   },
   "scripts": {
-    "build": "lerna run build",
+    "build": "run-s build:core build:actions",
+    "build:core": "lerna run --scope=@resideo/action-core-* build",
+    "build:actions": "lerna run --ignore=@resideo/action-core-* build",
     "problems": "lerna run problems",
     "lint": "eslint \"**/*.{js,ts}*\""
   },
@@ -26,9 +30,10 @@
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "eslint": "^6.7.2",
+    "lerna": "^3.20.2",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "typescript": "^3.7.5",
-    "lerna": "^3.20.2"
+    "typescript": "^3.7.5"
   },
   "volta": {
     "node": "10.16.0",
