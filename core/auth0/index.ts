@@ -5,8 +5,8 @@ import { ManagementClient, ManagementClientOptions } from "auth0";
 interface AddOriginConfig {
   clientId: string;
   origin: string;
-  callbackUrl?: string;
-  logoutUrl?: string;
+  callbackUrl: string;
+  logoutUrl: string;
 }
 
 interface RemoveOriginConfig {
@@ -36,11 +36,8 @@ export const addOrigin = async (
     { client_id: clientId },
     {
       web_origins: appendUrl(client?.web_origins, origin),
-      callbacks: appendUrl(client?.callbacks, callbackUrl || origin),
-      allowed_logout_urls: appendUrl(
-        client?.allowed_logout_urls,
-        logoutUrl || origin
-      )
+      callbacks: appendUrl(client?.callbacks, callbackUrl),
+      allowed_logout_urls: appendUrl(client?.allowed_logout_urls, logoutUrl)
     }
   );
 };
