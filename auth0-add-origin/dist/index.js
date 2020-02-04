@@ -17373,20 +17373,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(873));
-const actions_core_auth0_1 = __webpack_require__(499);
-const actions_core_interpolate_config_1 = __webpack_require__(969);
+const action_core_auth0_1 = __webpack_require__(499);
+const action_core_interpolate_config_1 = __webpack_require__(969);
 async function main({ domain, apiClientId, apiClientSecret, clientId, origin, callbackUrl, logoutUrl }) {
     try {
-        const auth0 = actions_core_auth0_1.createClient({
+        const auth0 = action_core_auth0_1.createClient({
             domain,
             clientId: apiClientId,
             clientSecret: apiClientSecret
         });
-        await actions_core_auth0_1.addOrigin(auth0, {
+        await action_core_auth0_1.addOrigin(auth0, {
             clientId,
-            origin: actions_core_interpolate_config_1.interpolate(origin),
-            callbackUrl: actions_core_interpolate_config_1.interpolate(callbackUrl || origin),
-            logoutUrl: actions_core_interpolate_config_1.interpolate(logoutUrl || origin)
+            origin: action_core_interpolate_config_1.interpolate(origin),
+            callbackUrl: action_core_interpolate_config_1.interpolate(callbackUrl || origin),
+            logoutUrl: action_core_interpolate_config_1.interpolate(logoutUrl || origin)
         });
         core.info(`Origin "${origin}" added to auth0 client "${clientId}"`);
     }

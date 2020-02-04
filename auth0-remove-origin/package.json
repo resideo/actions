@@ -13,8 +13,8 @@
     "problems": "tsc --noEmit"
   },
   "dependencies": {
-    "@resideo/actions-core-auth0": "*",
-    "@resideo/actions-core-interpolate-config": "*",
+    "@resideo/action-core-auth0": "*",
+    "@resideo/action-core-interpolate-config": "*",
     "@actions/core": "^1.2.2"
   },
   "devDependencies": {

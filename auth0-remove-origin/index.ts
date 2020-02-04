@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
-import { createClient, removeOrigin } from "@resideo/actions-core-auth0";
-import { interpolate } from "@resideo/actions-core-interpolate-config";
+import { createClient, removeOrigin } from "@resideo/action-core-auth0";
+import { interpolate } from "@resideo/action-core-interpolate-config";
 
 interface Args {
   domain: string;
