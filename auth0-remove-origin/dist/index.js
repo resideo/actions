@@ -107569,13 +107569,7 @@ formatters.O = function (v) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const mustache_1 = __webpack_require__(399);
-const configVariables = ({ eventPath }) => {
-    var _a, _b;
-    return ({
-        pullRequest: (_b = (_a = require(eventPath)) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number
-    });
-};
-exports.interpolate = (template, eventPath = process.env.GITHUB_EVENT_PATH || "") => mustache_1.render(template, configVariables({ eventPath }));
+exports.interpolate = (template, eventPath = process.env.GITHUB_EVENT_PATH || "") => mustache_1.render(template, { event: require(eventPath) });
 
 
 /***/ }),

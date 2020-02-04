@@ -17382,11 +17382,6 @@ async function main({ domain, apiClientId, apiClientSecret, clientId, origin, ca
             clientId: apiClientId,
             clientSecret: apiClientSecret
         });
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        core.info(JSON.stringify(require(process.env.GITHUB_EVENT_PATH || "")));
-        core.info(`Origin ${origin} ${actions_core_interpolate_config_1.interpolate(origin)}`);
-        core.info(`LogoutUrl ${logoutUrl} ${actions_core_interpolate_config_1.interpolate(logoutUrl || "")}`);
-        core.info(`CallbackUrl ${callbackUrl} ${actions_core_interpolate_config_1.interpolate(callbackUrl || "")}`);
         await actions_core_auth0_1.addOrigin(auth0, {
             clientId,
             origin: actions_core_interpolate_config_1.interpolate(origin),
@@ -107578,13 +107573,7 @@ formatters.O = function (v) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const mustache_1 = __webpack_require__(399);
-const configVariables = ({ eventPath }) => {
-    var _a, _b;
-    return ({
-        pullRequest: (_b = (_a = require(eventPath)) === null || _a === void 0 ? void 0 : _a.pull_request) === null || _b === void 0 ? void 0 : _b.number
-    });
-};
-exports.interpolate = (template, eventPath = process.env.GITHUB_EVENT_PATH || "") => mustache_1.render(template, configVariables({ eventPath }));
+exports.interpolate = (template, eventPath = process.env.GITHUB_EVENT_PATH || "") => mustache_1.render(template, { event: require(eventPath) });
 
 
 /***/ }),
