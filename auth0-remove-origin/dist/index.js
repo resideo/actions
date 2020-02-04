@@ -17375,12 +17375,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(873));
 const actions_core_auth0_1 = __webpack_require__(499);
 const actions_core_interpolate_config_1 = __webpack_require__(969);
-async function main({ domain, clientId, clientSecret, origin }) {
+async function main({ domain, apiClientId, apiClientSecret, clientId, origin }) {
     try {
         const auth0 = actions_core_auth0_1.createClient({
             domain,
-            clientId,
-            clientSecret
+            clientId: apiClientId,
+            clientSecret: apiClientSecret
         });
         await actions_core_auth0_1.removeOrigin(auth0, {
             clientId,
@@ -17394,8 +17394,9 @@ async function main({ domain, clientId, clientSecret, origin }) {
 }
 main({
     domain: core.getInput("domain"),
+    apiClientId: core.getInput("apiClientId"),
+    apiClientSecret: core.getInput("apiClientSecret"),
     clientId: core.getInput("clientId"),
-    clientSecret: core.getInput("clientSecret"),
     origin: core.getInput("origin")
 });
 
@@ -47617,10 +47618,7 @@ errors.SanitizedError = SanitizedError;
 /* eslint-disable @typescript-eslint/camelcase */
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth0_1 = __webpack_require__(492);
-const appendUrl = (urls, url) => [
-    ...(urls || []),
-    url
-];
+const appendUrl = (urls, url) => { var _a; return ((_a = urls) === null || _a === void 0 ? void 0 : _a.includes(url)) ? urls : [...(urls || []), url]; };
 const removeUrl = (urls, url) => (urls || []).filter(x => !x.includes(url));
 exports.createClient = (options, scope = "read:clients update:clients") => new auth0_1.ManagementClient({ ...options, scope });
 exports.addOrigin = async (auth0, { clientId, origin, callbackUrl, logoutUrl }) => {
@@ -47628,8 +47626,8 @@ exports.addOrigin = async (auth0, { clientId, origin, callbackUrl, logoutUrl }) 
     const client = await auth0.getClient({ client_id: clientId });
     await auth0.updateClient({ client_id: clientId }, {
         web_origins: appendUrl((_a = client) === null || _a === void 0 ? void 0 : _a.web_origins, origin),
-        callbacks: appendUrl((_b = client) === null || _b === void 0 ? void 0 : _b.callbacks, callbackUrl || origin),
-        allowed_logout_urls: appendUrl((_c = client) === null || _c === void 0 ? void 0 : _c.allowed_logout_urls, logoutUrl || origin)
+        callbacks: appendUrl((_b = client) === null || _b === void 0 ? void 0 : _b.callbacks, callbackUrl),
+        allowed_logout_urls: appendUrl((_c = client) === null || _c === void 0 ? void 0 : _c.allowed_logout_urls, logoutUrl)
     });
 };
 exports.removeOrigin = async (auth0, { clientId, origin }) => {
