@@ -1,0 +1,23 @@
+{
+  "name": "@resideo/action-auth0-add-origin",
+  "version": "0.0.1",
+  "description": "An action for adding an origin URL to an auth0 client",
+  "main": "dist/index.js",
+  "repository": "git@github.com:resideo/actions.git",
+  "author": "Resideo",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "ncc build index.ts -o dist --minify",
+    "watch": "yarn build --watch",
+    "problems": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@resideo/action-core-auth0": "*",
+    "@resideo/action-core-interpolate-config": "*",
+    "@actions/core": "^1.2.2"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.21.0"
+  }
+}

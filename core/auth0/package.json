@@ -1,0 +1,19 @@
+{
+  "name": "@resideo/action-core-auth0",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "repository": "git@github.com:resideo/actions.git",
+  "author": "Resideo",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "problems": "tsc --noEmit"
+  },
+  "dependencies": {
+    "auth0": "^2.22.0"
+  },
+  "devDependencies": {
+    "@types/auth0": "^2.20.0"
+  }
+}

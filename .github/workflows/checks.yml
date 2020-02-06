@@ -1,0 +1,37 @@
+name: Checks
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+          registry-url: https://npm.pkg.github.com
+      - run: yarn
+      - run: yarn lint
+
+  problems:
+    name: Problems
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+          registry-url: https://npm.pkg.github.com
+      - run: yarn
+      - run: yarn problems

@@ -1,0 +1,6 @@
+{
+  "extends": "@resideo/tsconfig",
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}
