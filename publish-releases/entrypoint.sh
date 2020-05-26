@@ -48,7 +48,7 @@ function get_directories(){
       cd $GITHUB_WORKSPACE/$1        
       if [ ! -f "package.json" ]; then
         if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-          super_directory+=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
+          super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
           json_locater $super_directory
         else
           cd $GITHUB_WORKSPACE
@@ -94,6 +94,8 @@ function get_directories(){
   current=$GITHUB_SHA
   diff_directories=($(echo $(format_dit_giff $(git diff --name-only $before..$current)) | xargs -n1 | sort -u | xargs))
   package_directories=()
+  
+  echo -e "${GREEN}Directories of git-diff: ${BLUE}${diff_directories[@]}${NC}"
 
   for i in ${!diff_directories[@]}; do
     json_locater ${diff_directories[$i]}
