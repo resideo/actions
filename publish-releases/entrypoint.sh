@@ -47,7 +47,7 @@ function get_directories(){
       cd $GITHUB_WORKSPACE/$1        
       if [ ! -f "package.json" ]; then
         if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-          super_directory+=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
+          super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
           json_locater $super_directory
         else
           cd $GITHUB_WORKSPACE
@@ -134,7 +134,7 @@ function get_directories_old(){
       cd $GITHUB_WORKSPACE/$1        
       if [ ! -f "package.json" ]; then
         if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-          super_directory+=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
+          super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
           json_locater $super_directory
         else
           cd $GITHUB_WORKSPACE
