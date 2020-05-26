@@ -43,92 +43,6 @@ function get_directories(){
   }
 
   function json_locater(){
-    if [ -d ${GITHUB_WORKSPACE}/$1 ]; then
-      cd $GITHUB_WORKSPACE/$1        
-      if [ ! -f "package.json" ]; then
-        if [ "$(echo $1 | grep -c "/")" = "1" ]; then
-          super_directory=$(echo $1 | sed 's:\(.*\)\/.*:\1:g');
-          json_locater $super_directory
-        else
-          cd $GITHUB_WORKSPACE
-          json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
-          json_count=${#json_within[@]};
-          if [ "$json_count" != "1" ]; then
-            echo -e "${RED}Excluding: ${YELLOW}.${RED} because there is a sub-package.${NC}"
-          else
-            package_directories+=(".")
-          fi
-        fi
-      else
-        json_within=($(find . -name 'package.json' -not -path './node_modules/*'));
-        json_count=${#json_within[@]};
-        if [ "$json_count" != "1" ]; then
-          echo -e "${RED}Excluding: ${YELLOW}$1${RED} because there is a sub-package.${NC}"
-        else
-          package_directories+=("$1")
-        fi
-      fi
-      cd $GITHUB_WORKSPACE
-    else
-      echo -e "${RED}Skipping ${YELLOW}$1${RED} because the directory does not exist.${NC}"
-    fi
-  }
-
-  function filter_ignores(){
-    defaults=("node_modules" ".github")
-    skip_directories=($(unslash_end $INPUT_IGNORE) ${defaults[@]})
-    for skip_directory in ${skip_directories[@]}; do
-      for i in ${!package_directories[@]}; do
-        if [ $(echo "${package_directories[$i]}" | sed -E "s:^$skip_directory.*::") ]; then
-          :
-        else
-          echo -e "${RED}Removing ${YELLOW}${package_directories[$i]} ${RED}because of ${YELLOW}${skip_directory}${NC}"
-          unset package_directories[$i]
-        fi
-      done
-    done
-  }
-
-  before=$(git --no-pager log --pretty=%P -n 1 $GITHUB_SHA)
-  current=$GITHUB_SHA
-  diffs=$(git diff --name-only $before..$current)
-  diff_directories=$(format_dit_giff $diffs)
-  diff_directories_array=(${diff_directories[@]})
-
-  echo -e "${GREEN}Directories of git-diff: ${BLUE}${diff_directories_array[@]}${NC}"
-
-  package_directories=()
-
-  for i in ${!diff_directories_array[@]}; do
-    echo -e "${GREEN}Running json_locator for: ${YELLOW}$1${NC}"
-    json_locater ${diff_directories_array[$i]}
-  done
-
-  filter_ignores
-
-  publish_directories=($(echo ${package_directories[@]} | xargs -n1 | sort -u | xargs))
-}
-
-
-
-function get_directories_old(){
-  function format_dit_giff(){
-    for to_format in $*; do 
-      if [ "$(echo $to_format | grep -c "/")" = "0" ]; then 
-        echo ".";
-      else 
-        echo $(echo $to_format | sed 's:\(.*\)\/.*:\1:g');
-      fi;
-    done;
-  }
-
-  function unslash_end(){
-    for to_unslash in $*; do
-      echo $to_unslash | sed 's:\/$::g';
-    done;
-  }
-
-  function json_locater(){
     echo -e "${GREEN}Running json_locator for: ${YELLOW}$1${NC}"
     if [ -d ${GITHUB_WORKSPACE}/$1 ]; then
       cd $GITHUB_WORKSPACE/$1        
@@ -180,6 +94,7 @@ function get_directories_old(){
   current=$GITHUB_SHA
   diff_directories=($(echo $(format_dit_giff $(git diff --name-only $before..$current)) | xargs -n1 | sort -u | xargs))
   package_directories=()
+  
   echo -e "${GREEN}Directories of git-diff: ${BLUE}${diff_directories[@]}${NC}"
 
   for i in ${!diff_directories[@]}; do
@@ -244,8 +159,5 @@ function publish(){
 }
 
 git_setup
-echo -e "${RED}OLD SETUP${NC}"
-get_directories_old
-echo -e "${RED}NEW SETUP${NC}"
 get_directories
-# publish
+publish
