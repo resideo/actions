@@ -1,6 +1,6 @@
 FROM node:12.18.4-alpine
 
-RUN apk add --no-cache git bash git-subtree jq python make g++ yarn=1.22.11
+RUN apk add --no-cache git bash git-subtree jq python make g++
 
 COPY entrypoint.sh /entrypoint.sh
 
