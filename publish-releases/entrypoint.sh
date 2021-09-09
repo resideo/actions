@@ -25,6 +25,12 @@ function git_setup(){
   git config user.name "$GITHUB_ACTOR"
 }
 
+function yarn_setup(){
+  echo -e "${YELLOW}Updating yarn to v1.22.11...${NC}"
+  apk del yarn
+  npm_config_unsafe_perm=true npm install --global yarn@1.2.11
+}
+
 function get_directories(){
   function format_dit_giff(){
     for to_format in $*; do 
@@ -160,4 +166,5 @@ function publish(){
 
 git_setup
 get_directories
+yarn_setup
 publish
