@@ -18,7 +18,6 @@ function run_danger(){
 
 function yarn_setup(){
   echo -e "${YELLOW}Updating yarn to v1.22.11...${NC}"
-  apk del yarn
   npm_config_unsafe_perm=true npm uninstall --global yarn
   npm_config_unsafe_perm=true npm install --global --force yarn@1.2.11
 }
