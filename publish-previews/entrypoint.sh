@@ -16,11 +16,16 @@ function run_danger(){
   danger ci
 }
 
+function yarn_setup(){
+  echo -e "${YELLOW}Updating yarn to v1.22.11...${NC}"
+  npm_config_unsafe_perm=true npm uninstall --global yarn
+  npm_config_unsafe_perm=true npm install --global --force yarn@1.2.11
+}
+
 function publish(){
   function install_with_CLI(){
     if [ -f "yarn.lock" ]; then
-      echo -e "${YELLOW}Updating yarn to 1.22.11...${NC}"
-      npm_config_unsafe_perm=true npm install -g yarn@1.22.11
+      yarn_setup
       echo -e "${YELLOW}Installing with yarn...${NC}"
       npm_config_unsafe_perm=true yarn
     else
