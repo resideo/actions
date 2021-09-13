@@ -49,4 +49,12 @@ runs:
           --address "${{ inputs.tl-console-url }}" \
           --user "${{ inputs.tl-username }}" \
           --password "${{ inputs.tl-password }}" \
+          --output-file ".twistlock-result.json" \
           ${{ inputs.tl-path }}
+    - name: Post a comment result
+      uses: actions/github-script@v4
+      with:
+        script: |
+          const results = require("./.twistlock-result.json");
+          const script = require('./dist/index.js')
+          await script.writeSummary({ github, context, core, results })

@@ -6,7 +6,8 @@
     "packages": [
       "auth0-add-origin",
       "auth0-remove-origin",
-      "core/*"
+      "core/*",
+      "twistlock"
     ]
   },
   "eslintConfig": {
