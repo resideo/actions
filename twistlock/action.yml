@@ -55,6 +55,7 @@ runs:
       uses: actions/github-script@v4
       with:
         script: |
+          const path = require('path');
           const results = require("./.twistlock-result.json");
-          const script = require('./dist/index.js')
+          const script = require(path.join(github.action_path, 'dist', 'index.js'))
           await script.writeSummary({ github, context, core, results })
