@@ -4,19 +4,19 @@ description: Run Twistlock
 inputs:
   tl-project:
     description: Specifies a target project
-    required: false
+    required: true
     default: Titan-QA
   tl-username:
     description: User for authenticating with Prisma Cloud Console.
-    required: false
+    required: true
     default: jenkins
   tl-password:
     description: Password for authenticating with Prisma Cloud Console.
-    required: false
+    required: true
     default: jenkins
   tl-console-url:
     description: Prisma Cloud Console's URL
-    required: false
+    required: true
     default: https://twistlock.cloud.resideo.com
   tl-cli-version:
     description: The version of the twistlock cli
