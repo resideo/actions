@@ -57,7 +57,7 @@ runs:
         script: |
           const path = require('path');
           const results = require("./.twistlock-result.json");
+          console.log('action_path', github.action_path)
           const scriptPath = path.join(github.action_path, 'dist', 'index.js');
-          console.log("scriptPath", scriptPath)
           const script = require(scriptPath);
           await script.writeSummary({ github, context, core, results })
