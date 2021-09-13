@@ -1,0 +1,47 @@
+name: Twistlock
+description: Run Twistlock
+
+inputs:
+  tl-username:
+    description: The username
+    required: false
+    default: jenkins
+  tl-password:
+    description: The password
+    required: false
+    default: jenkins
+  tl-console-url:
+    description: The console URL (eg https://console.your-company.org:8083)
+    required: false
+    default: https://twistlock.cloud.resideo.com
+  tl-cli-version:
+    description: The version of the twistlock cli
+    required: true
+    default: v1
+  tl-path:
+    description: Path to scan
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Download CLI from Twistlock console
+      shell: bash
+      run: |
+        curl \
+          --insecure \
+          --user "${{ inputs.tl-username }}:${{ inputs.tl-password }}" \
+          --output ./twistcli \
+          "${{ inputs.tl-console-url }}/api/${{ inputs.tl-cli-version }}/util/twistcli"
+        chmod a+x ./twistcli
+    - name: Scan the image using the Twistlock CLI
+      shell: bash
+      run: |
+        ./twistcli coderepo scan \
+          --ci \
+          --details \
+          -address "${{ inputs.tl-console-url }}" \
+          -u "${{ inputs.tl-username }}" \
+          -p "${{ inputs.tl-password }}" \
+          
