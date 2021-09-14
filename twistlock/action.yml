@@ -18,17 +18,15 @@ inputs:
     description: Prisma Cloud Console's URL
     required: true
     default: https://twistlock.cloud.resideo.com
-  tl-cli-version:
-    description: The version of the twistlock cli
-    required: true
-    default: v1
   tl-path:
     description: Path to scan
     required: false
     default: "."
 
 runs:
-  using: composite
+  using: "node12"
+  main: "dist/index.js"
+
   steps:
     - name: Download CLI from Twistlock console
       shell: bash
@@ -57,7 +55,6 @@ runs:
         script: |
           const path = require('path');
           const results = require("./.twistlock-result.json");
-          console.log('action_path', github.action_path)
           const scriptPath = path.join(github.action_path, 'dist', 'index.js');
           const script = require(scriptPath);
           await script.writeSummary({ github, context, core, results })
