@@ -1,10 +1,11 @@
-import { exec } from "@effection/node";
+import { Exec, exec } from "@effection/process";
+import { spawn } from "effection";
 import { join } from "path";
 import * as fs from "fs";
-import tmp from "tmp-promise";
+import { file, FileResult } from "tmp-promise";
+import { Logger } from "./types";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
-
 export interface TwistlockResults {
   repository: string;
   passed: boolean;
@@ -49,6 +50,7 @@ interface DownloadCliParams {
   password: string;
   consoleUrl: string;
   project: string;
+  logger: Logger;
 }
 
 interface ScanRepositoryParams {
@@ -61,12 +63,19 @@ async function fileExists(filePath: string) {
   );
 }
 
+type SetupCliReturn = {
+  scanRepository: (
+    params: ScanRepositoryParams
+  ) => Generator<any, TwistlockResults, any>;
+};
+
 export function* setupCli({
+  logger,
   user,
   password,
   consoleUrl,
   project
-}: DownloadCliParams): Generator<any, any, any> {
+}: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   const cliPath = join(__dirname, "twistcli");
 
   if (!(yield fileExists(cliPath))) {
@@ -74,28 +83,35 @@ export function* setupCli({
             --insecure
             --user "${user}:${password}" \
             --output ${cliPath} \
-            "${consoleUrl}/api/v1/util/twistcli"`);
-    yield exec(`chmod +x ${cliPath}`);
+            "${consoleUrl}/api/v1/util/twistcli"`).expect();
+    yield exec(`chmod +x ${cliPath}`).expect();
   }
 
-  function* scanRepository({
-    repositoryPath
-  }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
+  return {
+    scanRepository: function* scanRepository({
+      repositoryPath
+    }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
+      const output: FileResult = yield file();
 
-    const output = 
-    return yield exec(`${cliPath} coderepo scan \
+      logger.debug(`Will write output to ${output.path}`);
+
+      const scan = yield exec(`${cliPath} coderepo scan \
             --ci \
             --details \
             --project "${project}" \
             --address "${consoleUrl}" \
             --user "${user}" \
             --password "${password}" \
-            --output-file ".twistlock-result.json" \
+            --output-file "${output.path}" \
             ${repositoryPath}
         `);
-  }
 
-  return {
-    scanRepository
+      yield spawn(scan.stdout.forEach((text: string) => logger.info(text)));
+      yield spawn(scan.stderr.forEach((text: string) => logger.error(text)));
+
+      yield scan.expect();
+
+      return JSON.parse(output.path);
+    }
   };
 }

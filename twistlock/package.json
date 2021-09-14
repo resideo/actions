@@ -14,12 +14,14 @@
     "@actions/core": "^1.2.2",
     "@actions/github": "^5.0.0",
     "@octokit/action": "^3.15.6",
-    "@effection/main": "2.0.0-beta.15",
+    "effection": "^2.0.0-beta.16",
     "@effection/process": "^2.0.0-beta.15",
     "tmp-promise": "^3.0.2"
   },
   "devDependencies": {
     "@resideo/tsconfig": "0.0.6",
+    "@types/node": "^14.14.31",
+    "@types/tmp": "^0.2.1",
     "@vercel/ncc": "^0.31.1"
   }
 }

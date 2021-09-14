@@ -1,13 +1,12 @@
 import { Context } from "@actions/github/lib/context";
-import * as core from "@actions/core/lib/core";
 import { Octokit } from "@octokit/action";
 import { Heading, Vulnerabilities } from "./markdown";
-import { scan, setupCli, TwistlockResults } from "./twistlock";
-
+import { setupCli, SetupCliReturn, TwistlockResults } from "./twistlock";
+import { Core, Logger } from "./types";
 interface SummaryParams {
   github: Octokit;
   context: Context;
-  core: typeof core;
+  core: Core;
   results: TwistlockResults;
 }
 
@@ -41,12 +40,30 @@ export async function writeSummary({
   }
 }
 
-export function* run() {
-  const twistcli = yield setupCli({
-    user: core.getInput("tl-username"),
-    password: core.getInput("tl-password"),
-    url: core.getInput("tl-console-url")
+interface TwistlockRun {
+  user: string;
+  password: string;
+  consoleUrl: string;
+  project: string;
+  logger: Logger;
+  repositoryPath: string;
+}
+
+export function* run({
+  logger,
+  user,
+  password,
+  consoleUrl,
+  project,
+  repositoryPath
+}: TwistlockRun) {
+  const twistcli: SetupCliReturn = yield setupCli({
+    logger,
+    user,
+    password,
+    consoleUrl,
+    project
   });
 
-  yield scan(twistcli)
+  twistcli.scanRepository({ repositoryPath });
 }
