@@ -8,6 +8,7 @@ main(
     password: core.getInput("tl-password"),
     consoleUrl: core.getInput("tl-console-url"),
     project: core.getInput("tl-project"),
+    repositoryPath: process.cwd(),
     logger: {
       info: core["info"],
       debug: core["debug"],

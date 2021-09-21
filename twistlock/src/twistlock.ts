@@ -63,7 +63,7 @@ async function fileExists(filePath: string) {
   );
 }
 
-type SetupCliReturn = {
+export type SetupCliReturn = {
   scanRepository: (
     params: ScanRepositoryParams
   ) => Generator<any, TwistlockResults, any>;

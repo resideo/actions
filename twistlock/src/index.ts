@@ -65,5 +65,9 @@ export function* run({
     project
   });
 
-  twistcli.scanRepository({ repositoryPath });
+  const results: TwistlockResults = yield twistcli.scanRepository({
+    repositoryPath
+  });
+
+  
 }

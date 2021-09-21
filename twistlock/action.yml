@@ -27,34 +27,34 @@ runs:
   using: "node12"
   main: "dist/index.js"
 
-  steps:
-    - name: Download CLI from Twistlock console
-      shell: bash
-      run: |
-        curl \
-          --insecure \
-          --user "${{ inputs.tl-username }}:${{ inputs.tl-password }}" \
-          --output ./twistcli \
-          "${{ inputs.tl-console-url }}/api/${{ inputs.tl-cli-version }}/util/twistcli"
-        chmod a+x ./twistcli
-    - name: Scan the image using the Twistlock CLI
-      shell: bash
-      run: |
-        ./twistcli coderepo scan \
-          --ci \
-          --details \
-          --project "${{ inputs.tl-}}" \
-          --address "${{ inputs.tl-console-url }}" \
-          --user "${{ inputs.tl-username }}" \
-          --password "${{ inputs.tl-password }}" \
-          --output-file ".twistlock-result.json" \
-          ${{ inputs.tl-path }}
-    - name: Post a comment result
-      uses: actions/github-script@v4
-      with:
-        script: |
-          const path = require('path');
-          const results = require("./.twistlock-result.json");
-          const scriptPath = path.join(github.action_path, 'dist', 'index.js');
-          const script = require(scriptPath);
-          await script.writeSummary({ github, context, core, results })
+  # steps:
+  #   - name: Download CLI from Twistlock console
+  #     shell: bash
+  #     run: |
+  #       curl \
+  #         --insecure \
+  #         --user "${{ inputs.tl-username }}:${{ inputs.tl-password }}" \
+  #         --output ./twistcli \
+  #         "${{ inputs.tl-console-url }}/api/${{ inputs.tl-cli-version }}/util/twistcli"
+  #       chmod a+x ./twistcli
+  #   - name: Scan the image using the Twistlock CLI
+  #     shell: bash
+  #     run: |
+  #       ./twistcli coderepo scan \
+  #         --ci \
+  #         --details \
+  #         --project "${{ inputs.tl-}}" \
+  #         --address "${{ inputs.tl-console-url }}" \
+  #         --user "${{ inputs.tl-username }}" \
+  #         --password "${{ inputs.tl-password }}" \
+  #         --output-file ".twistlock-result.json" \
+  #         ${{ inputs.tl-path }}
+  #   - name: Post a comment result
+  #     uses: actions/github-script@v4
+  #     with:
+  #       script: |
+  #         const path = require('path');
+  #         const results = require("./.twistlock-result.json");
+  #         const scriptPath = path.join(github.action_path, 'dist', 'index.js');
+  #         const script = require(scriptPath);
+  #         await script.writeSummary({ github, context, core, results })
