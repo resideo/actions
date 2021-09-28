@@ -1,4 +1,4 @@
-import { Exec, exec } from "@effection/process";
+import { exec } from "@effection/process";
 import { spawn } from "effection";
 import { join } from "path";
 import * as fs from "fs";
@@ -6,6 +6,7 @@ import { file, FileResult } from "tmp-promise";
 import { Logger } from "./types";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
+
 export interface TwistlockResults {
   repository: string;
   passed: boolean;
@@ -80,7 +81,7 @@ export function* setupCli({
 
   if (!(yield fileExists(cliPath))) {
     yield exec(`curl \
-            --insecure
+            --insecure \
             --user "${user}:${password}" \
             --output ${cliPath} \
             "${consoleUrl}/api/v1/util/twistcli"`).expect();
