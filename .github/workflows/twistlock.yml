@@ -1,0 +1,23 @@
+name: Twistlock
+
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  twistlock:
+    name: Run Twistlock
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+        registry-url: https://npm.pkg.github.com
+    - run: yarn --frozen-lockfile
+    - uses: ./twistlock
+      with:
+        tl-project: Titan-QA
+        tl-username: ${{ secrets.TEMP_TWISTCLI_USERNAME }}
+        tl-password: ${{ secrets.TEMP_TWISTCLI_PASSWORD }}
+        tl-console-url: https://twistlock.cloud.resideo.com
