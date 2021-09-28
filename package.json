@@ -15,7 +15,8 @@
       "@resideo/typescript"
     ],
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "node_modules/"
     ]
   },
   "scripts": {
