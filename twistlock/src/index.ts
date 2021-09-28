@@ -1,44 +1,5 @@
-import { Context } from "@actions/github/lib/context";
-import { Octokit } from "@octokit/action";
-import { Heading, Vulnerabilities } from "./markdown";
 import { setupCli, SetupCliReturn, TwistlockResults } from "./twistlock";
-import { Core, Logger } from "./types";
-interface SummaryParams {
-  github: Octokit;
-  context: Context;
-  core: Core;
-  results: TwistlockResults;
-}
-
-export async function writeSummary({
-  github,
-  context,
-  results
-}: SummaryParams) {
-  const { vulnerabilities, vulnerabilityDistribution } = results;
-
-  const body = `
-    <details><summary>Vulnerabilities: ${Heading(
-      vulnerabilityDistribution
-    )}</summary>
-
-      ${Vulnerabilities(vulnerabilities)}
-
-    </details>
-  `;
-
-  github.issues.createComment({
-    // eslint-disable-next-line
-    issue_number: context.issue.number,
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    body
-  });
-
-  if (!results.passed) {
-    throw new Error(`☹️ Twistlock failed!`);
-  }
-}
+import { Logger } from "./types";
 
 interface TwistlockRun {
   user: string;
@@ -65,9 +26,13 @@ export function* run({
     project
   });
 
+  console.log("repository path (action default check)", repositoryPath);
+
   const results: TwistlockResults = yield twistcli.scanRepository({
     repositoryPath
   });
 
-  
+  console.log(results);
+  // generateSummaryComment
+  // createGithubComment
 }
