@@ -5,9 +5,6 @@ on:
     branches: 
       - master
 
-env:
-  GITHUB_TOKEN: ${{ secrets.RESIDEO_BOT_TOKEN }}
-
 jobs:
   twistlock:
     name: Run Twistlock
