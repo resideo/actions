@@ -1,19 +1,21 @@
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 import { main } from "effection";
 import { run } from "./src";
 
+const token =
+  core.getInput("token") === ""
+    ? process.env.GITHUB_TOKEN || ""
+    : core.getInput("token");
+const octokit = github.getOctokit(token);
+
 main(
   run({
-    user: core.getInput("tl-username"),
-    password: core.getInput("tl-password"),
-    consoleUrl: core.getInput("tl-console-url"),
-    project: core.getInput("tl-project"),
+    user: core.getInput("username"),
+    password: core.getInput("password"),
+    consoleUrl: "https://twistlock.cloud.resideo.com",
+    project: "Titan-QA",
     repositoryPath: process.cwd(),
-    logger: {
-      info: core["info"],
-      debug: core["debug"],
-      warning: core["warning"],
-      error: core["error"]
-    }
+    octokit
   })
 );

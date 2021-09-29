@@ -1,27 +1,10 @@
 import { exec } from "@effection/process";
-import { spawn } from "effection";
 import { join } from "path";
 import * as fs from "fs";
 import { file, FileResult } from "tmp-promise";
-import { Logger } from "./types";
+import { GitHub } from "@actions/github/lib/utils";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
-
-export interface TwistlockResults {
-  repository: string;
-  passed: boolean;
-  packages: {
-    type: string;
-    name: string;
-    version: string;
-    path: string;
-    license: string[];
-  }[];
-  complianceIssues: unknown;
-  complianceDistribution: Distribution;
-  vulnerabilities: Vulnerability[];
-  vulnerabilityDistribution: Distribution;
-}
 
 export interface Vulnerability {
   id: string;
@@ -46,22 +29,40 @@ export interface Distribution {
   total: number;
 }
 
+export interface TwistlockRun {
+  user: string;
+  password: string;
+  consoleUrl: string;
+  project: string;
+  repositoryPath: string;
+  octokit: InstanceType<typeof GitHub>;
+}
+
+export interface TwistlockResults {
+  repository: string;
+  passed: boolean;
+  packages: {
+    type: string;
+    name: string;
+    version: string;
+    path: string;
+    license: string[];
+  }[];
+  complianceIssues: unknown;
+  complianceDistribution: Distribution;
+  vulnerabilities: Vulnerability[];
+  vulnerabilityDistribution: Distribution;
+}
+
 interface DownloadCliParams {
   user: string;
   password: string;
   consoleUrl: string;
   project: string;
-  logger: Logger;
 }
 
 interface ScanRepositoryParams {
   repositoryPath: string;
-}
-
-async function fileExists(filePath: string) {
-  return new Promise(resolve =>
-    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
-  );
 }
 
 export type SetupCliReturn = {
@@ -70,8 +71,13 @@ export type SetupCliReturn = {
   ) => Generator<any, TwistlockResults, any>;
 };
 
+async function fileExists(filePath: string) {
+  return new Promise(resolve =>
+    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
+  );
+}
+
 export function* setupCli({
-  logger,
   user,
   password,
   consoleUrl,
@@ -94,11 +100,7 @@ export function* setupCli({
     }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
       const output: FileResult = yield file();
 
-      logger.debug(`Will write output to ${output.path}`);
-
       const scan = yield exec(`${cliPath} coderepo scan \
-            --ci \
-            --details \
             --project "${project}" \
             --address "${consoleUrl}" \
             --user "${user}" \
@@ -107,12 +109,9 @@ export function* setupCli({
             ${repositoryPath}
         `);
 
-      yield spawn(scan.stdout.forEach((text: string) => logger.info(text)));
-      yield spawn(scan.stderr.forEach((text: string) => logger.error(text)));
-
       yield scan.expect();
 
-      return JSON.parse(output.path);
+      return JSON.parse(fs.readFileSync(`${output.path}`, "utf-8"));
     }
   };
 }

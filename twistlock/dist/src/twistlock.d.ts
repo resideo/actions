@@ -1,20 +1,5 @@
-import { Logger } from "./types";
+import { GitHub } from "@actions/github/lib/utils";
 export declare const SEVERITY_LEVELS: readonly ["critical", "high", "medium", "low"];
-export interface TwistlockResults {
-    repository: string;
-    passed: boolean;
-    packages: {
-        type: string;
-        name: string;
-        version: string;
-        path: string;
-        license: string[];
-    }[];
-    complianceIssues: unknown;
-    complianceDistribution: Distribution;
-    vulnerabilities: Vulnerability[];
-    vulnerabilityDistribution: Distribution;
-}
 export interface Vulnerability {
     id: string;
     status: string;
@@ -36,12 +21,34 @@ export interface Distribution {
     low: number;
     total: number;
 }
+export interface TwistlockRun {
+    user: string;
+    password: string;
+    consoleUrl: string;
+    project: string;
+    repositoryPath: string;
+    octokit: InstanceType<typeof GitHub>;
+}
+export interface TwistlockResults {
+    repository: string;
+    passed: boolean;
+    packages: {
+        type: string;
+        name: string;
+        version: string;
+        path: string;
+        license: string[];
+    }[];
+    complianceIssues: unknown;
+    complianceDistribution: Distribution;
+    vulnerabilities: Vulnerability[];
+    vulnerabilityDistribution: Distribution;
+}
 interface DownloadCliParams {
     user: string;
     password: string;
     consoleUrl: string;
     project: string;
-    logger: Logger;
 }
 interface ScanRepositoryParams {
     repositoryPath: string;
@@ -49,6 +56,6 @@ interface ScanRepositoryParams {
 export declare type SetupCliReturn = {
     scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;
 };
-export declare function setupCli({ logger, user, password, consoleUrl, project }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
+export declare function setupCli({ user, password, consoleUrl, project }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
 export {};
 //# sourceMappingURL=twistlock.d.ts.map

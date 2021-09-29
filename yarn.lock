@@ -1110,15 +1110,15 @@
     eslint-plugin-jest "^23.0.4"
     eslint-plugin-prettier "^3.1.1"
 
-"@resideo/tsconfig@0.0.6":
-  version "0.0.6"
-  resolved "https://npm.pkg.github.com/download/@resideo/tsconfig/0.0.6/a2c2ff46cc936cd897cbfaa83697c8c67eb3800b52eed15e88c3e33951e1bb78#dd8e99b8aee539356d257c50113b6ec254eb267e"
-  integrity sha512-Bu5AKHUp7EwYCY7zQfq+CthoaGwwV3/EXeUb3DRKp7j0TY3R6tHPb2aOIJL9Chq92A6yGpI3C0nL63n9FaO6rQ==
-
 "@resideo/tsconfig@^0.0.5":
   version "0.0.5"
   resolved "https://npm.pkg.github.com/download/@resideo/tsconfig/0.0.5/b7d9c70b8480ca28298ffeb5aec68350876c122a6bdf73c63da43f9ab8913e4a#aaabde267a0c3e6fab7d34e41e9c7ebe9884ffb2"
   integrity sha512-L9fEHh7MRU00yzGMQ+drbeYr90QZcZrx/InxXvHpdRMHMQJULZM/czRl5BVRYhEam9aQ0LaK/Qb3JjUw+P/T+A==
+
+"@resideo/tsconfig@^0.0.6":
+  version "0.0.6"
+  resolved "https://npm.pkg.github.com/download/@resideo/tsconfig/0.0.6/a2c2ff46cc936cd897cbfaa83697c8c67eb3800b52eed15e88c3e33951e1bb78#dd8e99b8aee539356d257c50113b6ec254eb267e"
+  integrity sha512-Bu5AKHUp7EwYCY7zQfq+CthoaGwwV3/EXeUb3DRKp7j0TY3R6tHPb2aOIJL9Chq92A6yGpI3C0nL63n9FaO6rQ==
 
 "@types/auth0@^2.20.0":
   version "2.20.0"
