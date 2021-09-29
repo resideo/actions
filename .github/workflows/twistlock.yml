@@ -15,3 +15,5 @@ jobs:
       with:
         username: ${{ secrets.TEMP_TWISTCLI_USERNAME }}
         password: ${{ secrets.TEMP_TWISTCLI_PASSWORD }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
