@@ -6,9 +6,6 @@ Run Twistlock to list dependencies that have security vulnerabilities.
 ```yaml
 on: pull_request
 
-env:
-  GITHUB_TOKEN: ${{ secrets.RESIDEO_BOT_TOKEN }}
-
 jobs:
   job_name:
     name: Job Name
@@ -19,4 +16,6 @@ jobs:
       with:
         username: ${{ secrets.TWISTLOCK_USERNAME }}
         password: ${{ secrets.TWISTLOCK_PASSWORD }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
