@@ -48,7 +48,7 @@ const yarnWhyAll = function*(twistlockjson) {
           );
           yield command.join();
 
-          // this is to avoid packages that are output from twistlock but not actually in the monorepo (such as yarn)
+          // Twistlock reports npm packages that are not in yarn.lock. Yarn is a good example of such a package. It might be reporting system-level packages, but when we run those with yarn why, the command fails. this is to avoid these packages.
           if (errors.length) {
             const pkgToSkip = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
