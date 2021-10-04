@@ -4,7 +4,7 @@
   "description": "Run Twistlock on repository content.",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build index.ts -o dist --minify",
+    "build": "ncc build index.ts --minify",
     "watch": "yarn build --watch",
     "problems": "tsc --noEmit"
   },
