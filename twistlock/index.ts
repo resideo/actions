@@ -13,7 +13,7 @@ main(
   run({
     user: core.getInput("username"),
     password: core.getInput("password"),
-    consoleUrl: core.getInput("consuleURL"),
+    consoleUrl: core.getInput("consoleURL"),
     project: core.getInput("project"),
     repositoryPath: core.getInput("repositoryPath"),
     octokit

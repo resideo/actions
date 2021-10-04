@@ -5,7 +5,7 @@ inputs:
   project:
     description: Specifies a target project
     required: true
-  consuleURL:
+  consoleURL:
     description: Prisma Cloud Console's URL
     required: true
   repositoryPath:
