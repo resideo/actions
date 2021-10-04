@@ -15,7 +15,7 @@ main(
     password: core.getInput("password"),
     consoleUrl: core.getInput("consuleURL"),
     project: core.getInput("project"),
-    repositoryPath: process.cwd(),
+    repositoryPath: core.getInput("repositoryPath"),
     octokit
   })
 );
