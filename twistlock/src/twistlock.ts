@@ -4,12 +4,7 @@ import * as fs from "fs";
 import { file, FileResult } from "tmp-promise";
 import { GitHub } from "@actions/github/lib/utils";
 
-export const SEVERITY_LEVELS = [
-  "critical",
-  "high",
-  "medium",
-  "low"
-] as const;
+export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
 
 export interface Vulnerability {
   id: string;
