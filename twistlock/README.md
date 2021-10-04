@@ -14,6 +14,8 @@ jobs:
     - uses: actions/checkout@v2
     - uses: resideo/actions/twistlock@master
       with:
+        project: Titan-QA
+        consoleURL: https://twistlock.cloud.resideo.com
         username: ${{ secrets.TWISTLOCK_USERNAME }}
         password: ${{ secrets.TWISTLOCK_PASSWORD }}
       env:

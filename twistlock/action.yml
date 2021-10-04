@@ -2,6 +2,12 @@ name: Twistlock
 description: Run Twistlock
 
 inputs:
+  project:
+    description: Specifies a target project
+    required: true
+  consuleURL:
+    description: Prisma Cloud Console's URL
+    required: true
   username:
     description: User for authenticating with Prisma Cloud Console.
     required: true

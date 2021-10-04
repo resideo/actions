@@ -13,8 +13,8 @@ main(
   run({
     user: core.getInput("username"),
     password: core.getInput("password"),
-    consoleUrl: "https://twistlock.cloud.resideo.com",
-    project: "Titan-QA",
+    consoleUrl: core.getInput("consuleURL"),
+    project: core.getInput("project"),
     repositoryPath: process.cwd(),
     octokit
   })
