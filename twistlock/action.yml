@@ -1,0 +1,24 @@
+name: Twistlock
+description: Run Twistlock
+
+inputs:
+  project:
+    description: Specifies a target project
+    required: true
+  consoleURL:
+    description: Prisma Cloud Console's URL
+    required: true
+  repositoryPath:
+    description: Password for authenticating with Prisma Cloud Console.
+    required: false
+    default: '.'
+  username:
+    description: User for authenticating with Prisma Cloud Console.
+    required: true
+  password:
+    description: Password for authenticating with Prisma Cloud Console.
+    required: true
+
+runs:
+  using: "node12"
+  main: "dist/index.js"

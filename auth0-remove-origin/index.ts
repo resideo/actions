@@ -31,7 +31,9 @@ async function main({
 
     core.info(`Origin "${origin}" removed from auth0 client "${clientId}"`);
   } catch (error) {
-    core.setFailed(error.message);
+    if (error instanceof Error) {
+      core.setFailed(error.message);
+    }
   }
 }
 

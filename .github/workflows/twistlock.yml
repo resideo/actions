@@ -1,0 +1,21 @@
+name: Twistlock
+
+on:
+  pull_request:
+    branches: 
+      - master
+
+jobs:
+  twistlock:
+    name: Run Twistlock
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./twistlock
+      with:
+        project: Titan-QA
+        consoleURL: https://twistlock.cloud.resideo.com
+        username: ${{ secrets.TEMP_TWISTCLI_USERNAME }}
+        password: ${{ secrets.TEMP_TWISTCLI_PASSWORD }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

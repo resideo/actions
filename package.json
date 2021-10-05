@@ -6,6 +6,7 @@
     "packages": [
       "auth0-add-origin",
       "auth0-remove-origin",
+      "twistlock",
       "core/*"
     ]
   },
@@ -14,7 +15,8 @@
       "@resideo/typescript"
     ],
     "ignorePatterns": [
-      "dist"
+      "dist",
+      "node_modules/"
     ]
   },
   "scripts": {
@@ -33,13 +35,13 @@
     "lerna": "^3.20.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
-    "typescript": "^3.7.5"
+    "typescript": "^4.4.3"
   },
   "resolutions": {
     "minimist": ">=1.2.2"
   },
   "volta": {
-    "node": "10.16.0",
-    "yarn": "1.22.0"
+    "node": "12.18.4",
+    "yarn": "1.22.11"
   }
 }
