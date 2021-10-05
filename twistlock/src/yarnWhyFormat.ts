@@ -43,7 +43,9 @@ const yarnWhyAll = function*(twistlockjson) {
           );
           yield spawn(
             command.stderr.forEach(error => {
-              errors = [...errors, error];
+              if(error.match(/^error/i)) {
+                errors = [...errors, error];
+              }
             })
           );
           yield command.join();
@@ -146,7 +148,7 @@ const formatComment = (sorted, tag) => {
     );
   } else {
     return (
-      "You are receiving this comment because there are no dependencies with a security vulernability" +
+      "You are receiving this comment because there are no dependencies with a security vulnerability" +
       tag
     );
   }
