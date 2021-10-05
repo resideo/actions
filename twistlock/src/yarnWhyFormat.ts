@@ -43,7 +43,7 @@ const yarnWhyAll = function*(twistlockjson) {
           );
           yield spawn(
             command.stderr.forEach(error => {
-              if(error.match(/^error/i)) {
+              if (error.match(/^error/i)) {
                 errors = [...errors, error];
               }
             })
