@@ -113,70 +113,73 @@ const formatComment = (sorted, tag) => {
       .replace(/\n/g, "<br>")
       .replace(/info \r/g, "");
 
-  const htmlTable = (rows) => {
-    let allRows = rows.map(columns => {
-      return `<tr>${columns.join("")}</tr>`
-    }).join("");
+  const htmlTable = rows => {
+    const allRows = rows
+      .map(columns => {
+        return `<tr>${columns.join("")}</tr>`;
+      })
+      .join("");
     return `<table>${allRows}</table>`;
-  }
+  };
 
   const listOfDependencies = (packages: VulnerabilityTagged[]) => {
-    return packages.map(pkg => {
-      const {
-        cvss,
-        description,
-        discoveredDate,
-        link,
-        packageName,
-        packageVersion,
-        status,
-        yarnWhy
-      } = pkg;
+    return packages
+      .map(pkg => {
+        const {
+          cvss,
+          description,
+          discoveredDate,
+          link,
+          packageName,
+          packageVersion,
+          status,
+          yarnWhy
+        } = pkg;
 
-      const yarnWhyDetails = dropdown(
-        "Details",
-        convertArrayForMarkdown(yarnWhy)
-      );
+        const yarnWhyDetails = dropdown(
+          "Details",
+          convertArrayForMarkdown(yarnWhy)
+        );
 
-      // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
-      const graceTime = 30;
-      const fixDiscoveredDate = new Date(discoveredDate);
-      const graceExpiry = fixDiscoveredDate.setDate(fixDiscoveredDate.getDate() + graceTime);
-      const graceDays = Math.floor((graceExpiry - Date.now())/86_400_000);
-      const graceCountdown = graceDays >= 0 ? `${graceDays} days left` : `⚠️ ${graceDays} days overdue`; 
+        // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
+        const graceTime = 30;
+        const fixDiscoveredDate = new Date(discoveredDate);
+        const graceExpiry = fixDiscoveredDate.setDate(
+          fixDiscoveredDate.getDate() + graceTime
+        );
+        const graceDays = Math.floor((graceExpiry - Date.now()) / 86_400_000);
+        const graceCountdown =
+          graceDays >= 0
+            ? `${graceDays} days left`
+            : `⚠️ ${graceDays} days overdue`;
 
-      const summaryTable = htmlTable([
-        [
-          "<th>Current Ver.</th>",
-          "<th>Status</th>",
-          "<th>Severity</th>",
-          "<th>Grace Period</th>"
-        ],
-        [
-          `<th>${packageVersion}</th>`,
-          `<th>${status}</th>`,
-          `<th>${cvss}</th>`,
-          `<th>${graceCountdown}</th>`,
-        ]
-      ]);
+        const summaryTable = htmlTable([
+          [
+            "<th>Current Ver.</th>",
+            "<th>Status</th>",
+            "<th>Severity</th>",
+            "<th>Grace Period</th>"
+          ],
+          [
+            `<th>${packageVersion}</th>`,
+            `<th>${status}</th>`,
+            `<th>${cvss}</th>`,
+            `<th>${graceCountdown}</th>`
+          ]
+        ]);
 
-      const detailsTable = htmlTable([
-        [
-          "<td>Description</td>",
-          `<td>${description}</td>`
-        ],
-        [
-          "<td>Source</td>",
-          `<td><a href=${link}>Link</a></td>`
-        ],
-        [
-          "<td>Yarn Why</td>",
-          `<td>${yarnWhyDetails}</td>`
-        ]
-      ]);
+        const detailsTable = htmlTable([
+          ["<td>Description</td>", `<td>${description}</td>`],
+          ["<td>Source</td>", `<td><a href=${link}>Link</a></td>`],
+          ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`]
+        ]);
 
-      return dropdown(`<code>${packageName}</code>`, `<br>${summaryTable}${detailsTable}`);
-    }).join("");
+        return dropdown(
+          `<code>${packageName}</code>`,
+          `<br>${summaryTable}${detailsTable}`
+        );
+      })
+      .join("");
   };
 
   const severityTable = sorted
