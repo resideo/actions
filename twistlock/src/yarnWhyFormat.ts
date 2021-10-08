@@ -143,7 +143,7 @@ const formatComment = (sorted, tag) => {
       const fixDiscoveredDate = new Date(discoveredDate);
       const graceExpiry = fixDiscoveredDate.setDate(fixDiscoveredDate.getDate() + graceTime);
       const graceDays = Math.floor((graceExpiry - Date.now())/86_400_000);
-      const graceCountdown = graceDays >= 0 ? `${graceDays} days remaining` : `${graceDays} past due date`; 
+      const graceCountdown = graceDays >= 0 ? `${graceDays} days left` : `⚠️ ${graceDays} days overdue`; 
 
       const summaryTable = htmlTable([
         [
