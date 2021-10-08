@@ -14,11 +14,13 @@ export interface Vulnerability {
   description: string;
   severity: typeof SEVERITY_LEVELS[number];
   packageName: string;
+  packageVersion: string;
   link: string;
   riskFactor: string[];
   impactedVersions: string[];
   publishDate: string;
   discoveredDate: string;
+  fixDate: string;
 }
 
 export interface Distribution {

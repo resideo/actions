@@ -105,26 +105,78 @@ const sortAndCategorize = afterYarnWhy => {
 
 const formatComment = (sorted, tag) => {
   const dropdown = (title, content) =>
-    `<details><summary>${title}</summary><hr>${content}</details>`;
+    `<details><summary>${title}</summary>${content}</details>`;
+
   const convertArrayForMarkdown = output =>
     output
       .join("")
       .replace(/\n/g, "<br>")
       .replace(/info \r/g, "");
 
-  const tableOfDependencies = (packages: VulnerabilityTagged[]) => {
-    const header =
-      "<thead><tr><th>Dependencies</th><th>Yarn Why</th></tr></thead>";
-    const table = packages
-      .map(pkg => {
-        const outputDropdown = dropdown(
-          "Details",
-          convertArrayForMarkdown(pkg.yarnWhy)
-        );
-        return `<tr><td><code>${pkg.packageName}</code></td><td>${outputDropdown}</td></tr>`;
-      })
-      .join("");
-    return `<table>${header}${table}</table>`;
+  const htmlTable = (rows) => {
+    let allRows = rows.map(columns => {
+      return `<tr>${columns.join("")}</tr>`
+    }).join("");
+    return `<table>${allRows}</table>`;
+  }
+
+  const listOfDependencies = (packages: VulnerabilityTagged[]) => {
+    return packages.map(pkg => {
+      const {
+        cvss,
+        description,
+        discoveredDate,
+        link,
+        packageName,
+        packageVersion,
+        status,
+        yarnWhy
+      } = pkg;
+
+      const yarnWhyDetails = dropdown(
+        "Details",
+        convertArrayForMarkdown(yarnWhy)
+      );
+
+      // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
+      const graceTime = 30;
+      const fixDiscoveredDate = new Date(discoveredDate);
+      const graceExpiry = fixDiscoveredDate.setDate(fixDiscoveredDate.getDate() + graceTime);
+      const graceDays = Math.floor((graceExpiry - Date.now())/86_400_000);
+      const graceCountdown = graceDays >= 0 ? `${graceDays} days remaining` : `${graceDays} past due date`; 
+
+      const summaryTable = htmlTable([
+        [
+          "<th>Current Ver.</th>",
+          "<th>Status</th>",
+          "<th>Severity</th>",
+          "<th>Grace Period</th>"
+        ],
+        [
+          `<th>${packageVersion}</th>`,
+          `<th>${status}</th>`,
+          `<th>${cvss}</th>`,
+          `<th>${graceCountdown}</th>`,
+        ]
+      ]);
+
+      const detailsTable = htmlTable([
+        [
+          "<td>Description</td>",
+          `<td>${description}</td>`
+        ],
+        [
+          "<td>Source</td>",
+          `<td><a href=${link}>Link</a></td>`
+        ],
+        [
+          "<td>Yarn Why</td>",
+          `<td>${yarnWhyDetails}</td>`
+        ]
+      ]);
+
+      return dropdown(`<code>${packageName}</code>`, `<br>${summaryTable}${detailsTable}`);
+    }).join("");
   };
 
   const severityTable = sorted
@@ -132,7 +184,7 @@ const formatComment = (sorted, tag) => {
       if (group.packages.length > 0) {
         return dropdown(
           `${group.severity.toUpperCase()} (${group.packages.length})`,
-          `${tableOfDependencies(group.packages)}<hr>`
+          `<hr>${listOfDependencies(group.packages)}<hr>`
         );
       } else {
         return "";

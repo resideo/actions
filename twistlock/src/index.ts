@@ -20,12 +20,12 @@ export function* run({
     consoleUrl,
     project
   });
-
+  
   const results: TwistlockResults = yield twistcli.scanRepository({
     repositoryPath
   });
-
+  
   const message = yield yarmWhyFormat({ message: results, tag });
-
+  
   yield postGithubComment(octokit, { message, tag });
 }
