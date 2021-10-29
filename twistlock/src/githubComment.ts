@@ -11,7 +11,6 @@ export function* postGithubComment(octokit, { message, tag, pass }) {
     const allComments = yield octokit.rest.issues.listComments({
       owner,
       repo,
-      // eslint-disable-next-line @typescript-eslint/camelcase
       issue_number: number
     });
 
@@ -23,7 +22,6 @@ export function* postGithubComment(octokit, { message, tag, pass }) {
       yield octokit.rest.issues.updateComment({
         owner,
         repo,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         comment_id: previousComment.id,
         body: `${message}`
       });
@@ -31,7 +29,6 @@ export function* postGithubComment(octokit, { message, tag, pass }) {
       yield octokit.rest.issues.createComment({
         owner,
         repo,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         issue_number: number,
         body: `${message}`
       });

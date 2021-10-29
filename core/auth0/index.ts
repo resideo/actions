@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 import { ManagementClient, ManagementClientOptions } from "auth0";
 
 interface AddOriginConfig {
