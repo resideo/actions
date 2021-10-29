@@ -141,27 +141,34 @@ const formatComment = (sorted, tag) => {
           convertArrayForMarkdown(yarnWhy)
         );
 
-        // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
-
         const graceCountdown =
           graceDays >= 0
             ? `${graceDays} days left`
             : `⚠️ ${graceDays} days overdue`;
 
-        const summaryTable = htmlTable([
-          [
-            "<th>Current Ver.</th>",
-            "<th>Status</th>",
-            "<th>Severity</th>",
-            "<th>Grace Period</th>"
-          ],
-          [
-            `<th>${packageVersion}</th>`,
-            `<th>${status}</th>`,
-            `<th>${cvss}</th>`,
-            `<th>${graceCountdown}</th>`
-          ]
-        ]);
+        const summaryTable = graceDays
+          ? htmlTable([
+              [
+                "<th>Current Ver.</th>",
+                "<th>Status</th>",
+                "<th>Severity</th>",
+                "<th>Grace Period</th>"
+              ],
+              [
+                `<th>${packageVersion}</th>`,
+                `<th>${status}</th>`,
+                `<th>${cvss}</th>`,
+                `<th>${graceCountdown}</th>`
+              ]
+            ])
+          : htmlTable([
+              ["<th>Current Ver.</th>", "<th>Status</th>", "<th>Severity</th>"],
+              [
+                `<th>${packageVersion}</th>`,
+                `<th>${status}</th>`,
+                `<th>${cvss}</th>`
+              ]
+            ]);
 
         const detailsTable = htmlTable([
           ["<td>Description</td>", `<td>${description}</td>`],
