@@ -21,9 +21,9 @@
   },
   "scripts": {
     "build": "run-s build:core build:actions",
-    "build:core": "yarn workspaces --scope=@resideo/action-core-* build",
-    "build:actions": "yarn workspaces --ignore=@resideo/action-core-* build",
-    "problems": "yarn workspaces problems",
+    "build:core": "yarn workspaces run --scope=@resideo/action-core-* build",
+    "build:actions": "yarn workspaces run --ignore=@resideo/action-core-* build",
+    "problems": "yarn workspaces run problems",
     "lint": "eslint \"**/*.{js,ts}*\""
   },
   "devDependencies": {
