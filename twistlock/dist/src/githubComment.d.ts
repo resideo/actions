@@ -1,5 +1,6 @@
-export declare function postGithubComment(octokit: any, { message, tag }: {
+export declare function postGithubComment(octokit: any, { message, tag, pass }: {
     message: any;
     tag: any;
-}): Generator<any, void, unknown>;
+    pass: any;
+}): Generator<any, any, unknown>;
 //# sourceMappingURL=githubComment.d.ts.map

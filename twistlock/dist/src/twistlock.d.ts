@@ -15,6 +15,7 @@ export interface Vulnerability {
     publishDate: string;
     discoveredDate: string;
     fixDate: string;
+    graceDays: number;
 }
 export interface Distribution {
     critical: number;

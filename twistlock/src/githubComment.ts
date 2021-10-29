@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-export function* postGithubComment(octokit, { message, tag }) {
+export function* postGithubComment(octokit, { message, tag, pass }) {
   if (!github.context.payload.pull_request) {
     core.setFailed("This action can only be run on pull requests");
   } else {
@@ -36,5 +36,6 @@ export function* postGithubComment(octokit, { message, tag }) {
         body: `${message}`
       });
     }
+    return pass;
   }
 }

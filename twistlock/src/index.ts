@@ -1,3 +1,4 @@
+import * as core from "@actions/core";
 import { setupCli } from "./twistlock";
 import { SetupCliReturn, TwistlockResults, TwistlockRun } from "./twistlock";
 import { yarmWhyFormat } from "./yarnWhyFormat";
@@ -25,7 +26,17 @@ export function* run({
     repositoryPath
   });
 
-  const message = yield yarmWhyFormat({ message: results, tag });
+  const { message, pass } = yield yarmWhyFormat({ results, tag });
 
-  yield postGithubComment(octokit, { message, tag });
+  const toPassOrFail: boolean = yield postGithubComment(octokit, {
+    message,
+    tag,
+    pass
+  });
+
+  if (!toPassOrFail) {
+    core.setFailed(
+      "Twistlock report shows there are vulnerabilities that must be addressed. Refer to the generated Gihub Comment to see which dependencies are vulnerable."
+    );
+  }
 }

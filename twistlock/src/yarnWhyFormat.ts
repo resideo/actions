@@ -128,12 +128,12 @@ const formatComment = (sorted, tag) => {
         const {
           cvss,
           description,
-          discoveredDate,
           link,
           packageName,
           packageVersion,
           status,
-          yarnWhy
+          yarnWhy,
+          graceDays
         } = pkg;
 
         const yarnWhyDetails = dropdown(
@@ -142,12 +142,7 @@ const formatComment = (sorted, tag) => {
         );
 
         // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
-        const graceTime = 30;
-        const fixDiscoveredDate = new Date(discoveredDate);
-        const graceExpiry = fixDiscoveredDate.setDate(
-          fixDiscoveredDate.getDate() + graceTime
-        );
-        const graceDays = Math.floor((graceExpiry - Date.now()) / 86_400_000);
+
         const graceCountdown =
           graceDays >= 0
             ? `${graceDays} days left`
@@ -209,10 +204,13 @@ const formatComment = (sorted, tag) => {
   }
 };
 
-export function* yarmWhyFormat({ message, tag }) {
-  const yarnWhyResults: VulnerabilityTagged[] = yield yarnWhyAll(message);
+export function* yarmWhyFormat({ results, tag }) {
+  const yarnWhyResults: VulnerabilityTagged[] = yield yarnWhyAll(results);
   const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
     yarnWhyResults
   );
-  return formatComment(sorted, tag);
+  return {
+    message: formatComment(sorted, tag),
+    pass: results.passed
+  };
 }
