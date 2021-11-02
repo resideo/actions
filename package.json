@@ -14,6 +14,9 @@
     "extends": [
       "@resideo/typescript"
     ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "off"
+    },
     "ignorePatterns": [
       "dist",
       "node_modules/"
