@@ -8,7 +8,6 @@ interface CommandExec {
 }
 
 function* run({ command, checkForLog }: CommandExec) {
-  console.log({ command, checkForLog });
   const myProcess = yield daemon(command);
 
   yield myProcess.stdout
