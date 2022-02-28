@@ -13,9 +13,9 @@
     "problems": "tsc --noEmit"
   },
   "dependencies": {
+    "@actions/core": "^1.2.2",
     "@resideo/action-core-auth0": "*",
-    "@resideo/action-core-interpolate-config": "*",
-    "@actions/core": "^1.2.2"
+    "@resideo/action-core-interpolate-config": "*"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.21.0"
