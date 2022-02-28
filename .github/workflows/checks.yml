@@ -7,7 +7,7 @@ on:
   pull_request:
 
 env:
-  GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GRAPHQL_RESIDEO_BOT_TOKEN }}
 
 jobs:
   lint:
