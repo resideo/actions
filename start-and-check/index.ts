@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
-import { main, withTimeout } from "effection";
-import { daemon } from "@effection/process";
+import { main, withTimeout, spawn, MainError } from "effection";
+import { exec } from "@effection/process";
 
 interface CommandExec {
   command: string;
@@ -8,13 +8,32 @@ interface CommandExec {
 }
 
 function* run({ command, checkForLog }: CommandExec) {
-  const myProcess = yield daemon(command);
+  const startProcess = yield exec(command);
 
-  yield myProcess.stdout
-    .filter((chunk: any) => chunk.includes(checkForLog))
-    .expect();
+  yield spawn(
+    startProcess.stdout.forEach((text: string) => console.log(text.toString()))
+  );
+
+  yield spawn(
+    startProcess.stderr.forEach((text: string) =>
+      console.error(text.toString())
+    )
+  );
+
+  try {
+    yield startProcess.stdout
+      .filter((chunk: any) => chunk.includes(checkForLog))
+      .expect();
+  } catch (error) {
+    throw new MainError({
+      message: `did not find the stdout text:
+    ${checkForLog}`,
+      exitCode: 1,
+    });
+  }
 
   console.log(
+    "\x1b[32m%s\x1b[0m",
     `command successfully completed${
       checkForLog === undefined || checkForLog === ""
         ? ""
@@ -24,12 +43,19 @@ function* run({ command, checkForLog }: CommandExec) {
   );
 }
 
-main(
-  withTimeout(
-    Number(core.getInput("waitFor")) * 1000,
-    run({
-      command: core.getInput("command"),
-      checkForLog: core.getInput("checkForLog"),
-    })
-  )
-);
+main(function*() {
+  try {
+    yield withTimeout(
+      Number(core.getInput("waitFor")) * 1000,
+      run({
+        command: core.getInput("command"),
+        checkForLog: core.getInput("checkForLog"),
+      })
+    );
+  } catch (error) {
+    throw new MainError({
+      message: error as string,
+      exitCode: 1,
+    });
+  }
+});
