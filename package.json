@@ -7,6 +7,7 @@
       "auth0-add-origin",
       "auth0-remove-origin",
       "twistlock",
+      "start-and-check",
       "core/*"
     ]
   },
@@ -42,6 +43,6 @@
   },
   "volta": {
     "node": "12.18.4",
-    "yarn": "1.22.11"
+    "yarn": "1.22.17"
   }
 }

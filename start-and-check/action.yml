@@ -1,0 +1,19 @@
+name: Start and Check
+description: Start a service and check that it logs a ready state.
+
+inputs:
+  command:
+    description: The command to run.
+    required: true
+  checkForLog:
+    description: The text to check to confirm it ran correctly.
+    required: false
+    default: ""
+  waitFor:
+    description: How long to wait for the text.
+    required: false
+    default: "20"
+
+runs:
+  using: "node12"
+  main: "dist/index.js"
