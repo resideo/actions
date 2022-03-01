@@ -14,10 +14,14 @@ function* run({ command, checkForLog }: CommandExec) {
     .filter((chunk: any) => chunk.includes(checkForLog))
     .expect();
 
-  console.log(`command successfully completed${
-    checkForLog !== "" || !checkForLog ? "" : `and included the search text:`
-  }
-  ${checkForLog}`);
+  console.log(
+    `command successfully completed${
+      checkForLog === undefined || checkForLog === ""
+        ? ""
+        : ` and included the search text:
+  ${checkForLog}`
+    }`
+  );
 }
 
 main(
