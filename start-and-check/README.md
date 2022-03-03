@@ -1,6 +1,6 @@
-# Twistlock Action
+# Start And Check Action
 
-Run Twistlock to list dependencies that have security vulnerabilities.
+Run a service or script and fail if stdout doesn't contain `checkForLog` or it returns with a non-zero exit code.
 
 ## Usage
 ```yaml
@@ -12,12 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: resideo/actions/twistlock@master
+    - name: startup check
+      uses: resideo/actions/start-and-check@master
       with:
-        project: Titan-QA
-        consoleURL: https://twistlock.cloud.resideo.com
-        username: ${{ secrets.TWISTLOCK_USERNAME }}
-        password: ${{ secrets.TWISTLOCK_PASSWORD }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        command: node dist/run/service
+        checkForLog: 🚀 Server ready at http://localhost:8080/graphql
 ```
