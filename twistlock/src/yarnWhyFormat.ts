@@ -44,18 +44,15 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
 
           yield spawn(
             command.stdout.forEach((message) => {
-              messages = [...messages, message];
+              const messageStringified = message.toString().trim();
+              messages = [...messages, messageStringified];
             })
           );
           yield spawn(
             command.stderr.forEach((error) => {
-              if (
-                error
-                  .toString()
-                  .trim()
-                  .match(/^error/i)
-              ) {
-                errors = [...errors, error];
+              const errorStringified = error.toString().trim();
+              if (errorStringified.match(/^error/i)) {
+                errors = [...errors, errorStringified];
               }
             })
           );
@@ -76,7 +73,7 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
             const pkgToDisplay = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
             );
-            pkgToDisplay.yarnWhy = messages.toString().trim();
+            pkgToDisplay.yarnWhy = messages;
             packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
           }
         }
