@@ -12,20 +12,24 @@ export function* run({
   consoleUrl,
   project,
   repositoryPath,
-  octokit
+  octokit,
 }: TwistlockRun) {
   const twistcli: SetupCliReturn = yield setupCli({
     user,
     password,
     consoleUrl,
-    project
+    project,
   });
 
+  console.log(`running in ${repositoryPath}`);
   const results: TwistlockResults = yield twistcli.scanRepository({
-    repositoryPath
+    repositoryPath,
   });
 
   const message = yield yarmWhyFormat({ message: results, tag });
 
+  console.log("::group::comment");
+  console.dir(message);
+  console.log("::endgroup::");
   yield postGithubComment(octokit, { message, tag });
 }
