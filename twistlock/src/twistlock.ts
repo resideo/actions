@@ -125,10 +125,6 @@ export function* setupCli({
 
       const results = fs.readFileSync(`${output.path}`, "utf-8");
 
-      console.log("::group::results");
-      console.log(results);
-      console.log("::endgroup::");
-
       return JSON.parse(results);
     },
   };

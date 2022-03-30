@@ -25,6 +25,10 @@ const yarnWhyAll = function*(twistlockjson) {
     }
   }, []);
 
+  console.log("::group::results");
+  console.dir(duplicatesRemoved);
+  console.log("::endgroup::");
+
   let packagesToSkip: Vulnerability[] = [];
   let packagesToDisplay: VulnerabilityTagged[] = [];
 
