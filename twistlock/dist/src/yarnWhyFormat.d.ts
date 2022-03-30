@@ -6,9 +6,10 @@ export interface VulnerabilitiesCategorized {
     severity: string;
     packages: VulnerabilityTagged[];
 }
-export declare function yarmWhyFormat({ message, tag }: {
+export declare function yarmWhyFormat({ message, tag, repositoryPath }: {
     message: any;
     tag: any;
+    repositoryPath: any;
 }): Generator<Generator<import("effection").Operation<unknown[]>, VulnerabilityTagged[], unknown>, string, VulnerabilityTagged[]>;
 export {};
 //# sourceMappingURL=yarnWhyFormat.d.ts.map

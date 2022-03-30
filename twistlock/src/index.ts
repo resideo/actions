@@ -26,7 +26,11 @@ export function* run({
     repositoryPath,
   });
 
-  const message = yield yarmWhyFormat({ message: results, tag });
+  const message = yield yarmWhyFormat({
+    message: results,
+    tag,
+    repositoryPath,
+  });
 
   console.log("::group::comment");
   console.dir(message);
