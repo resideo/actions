@@ -75,8 +75,8 @@ export type SetupCliReturn = {
 };
 
 async function fileExists(filePath: string) {
-  return new Promise(resolve =>
-    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
+  return new Promise((resolve) =>
+    fs.access(filePath, fs.constants.F_OK, (e) => resolve(!e))
   );
 }
 
@@ -84,7 +84,7 @@ export function* setupCli({
   user,
   password,
   consoleUrl,
-  project
+  project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   const cliPath = join(__dirname, "twistcli");
 
@@ -103,6 +103,7 @@ export function* setupCli({
     }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
       const output: FileResult = yield file();
 
+      console.log("::group::scan");
       const scan = yield exec(`${cliPath} coderepo scan \
             --project "${project}" \
             --address "${consoleUrl}" \
@@ -113,15 +114,22 @@ export function* setupCli({
             ${repositoryPath}
         `);
       yield spawn(
-        scan.stdout.forEach(text => console.log(text.toString().trim()))
+        scan.stdout.forEach((text) => console.log(text.toString().trim()))
       );
       yield spawn(
-        scan.stderr.forEach(text => console.error(text.toString().trim()))
+        scan.stderr.forEach((text) => console.error(text.toString().trim()))
       );
 
       yield scan.expect();
+      console.log("::endgroup::");
 
-      return JSON.parse(fs.readFileSync(`${output.path}`, "utf-8"));
-    }
+      const results = fs.readFileSync(`${output.path}`, "utf-8");
+
+      console.log("::group::results");
+      console.log(results);
+      console.log("::endgroup::");
+
+      return JSON.parse(results);
+    },
   };
 }

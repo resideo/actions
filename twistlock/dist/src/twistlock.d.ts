@@ -58,6 +58,6 @@ interface ScanRepositoryParams {
 export declare type SetupCliReturn = {
     scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;
 };
-export declare function setupCli({ user, password, consoleUrl, project }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
+export declare function setupCli({ user, password, consoleUrl, project, }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
 export {};
 //# sourceMappingURL=twistlock.d.ts.map
