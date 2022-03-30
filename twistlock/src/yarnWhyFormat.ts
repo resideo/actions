@@ -82,6 +82,7 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
     )
   );
 
+  console.log({ packagesToDisplay, packagesToSkip });
   // TODO: Remove this and convert errors to a boolean if we don't need this information
   if (packagesToSkip.length > 0) {
     console.warn(
