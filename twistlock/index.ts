@@ -15,7 +15,8 @@ main(
     password: core.getInput("password"),
     consoleUrl: core.getInput("consoleURL"),
     project: core.getInput("project"),
-    repositoryPath: core.getInput("repositoryPath"),
+    repositoryPath:
+      core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
     octokit
   })
 );

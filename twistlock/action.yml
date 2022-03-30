@@ -9,9 +9,8 @@ inputs:
     description: Prisma Cloud Console's URL
     required: true
   repositoryPath:
-    description: Password for authenticating with Prisma Cloud Console.
+    description: The path to the source code to scan.
     required: false
-    default: '.'
   username:
     description: User for authenticating with Prisma Cloud Console.
     required: true
