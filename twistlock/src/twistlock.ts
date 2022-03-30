@@ -75,8 +75,8 @@ export type SetupCliReturn = {
 };
 
 async function fileExists(filePath: string) {
-  return new Promise((resolve) =>
-    fs.access(filePath, fs.constants.F_OK, (e) => resolve(!e))
+  return new Promise(resolve =>
+    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
   );
 }
 
@@ -84,7 +84,7 @@ export function* setupCli({
   user,
   password,
   consoleUrl,
-  project,
+  project
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   const cliPath = join(__dirname, "twistcli");
 
@@ -109,6 +109,7 @@ export function* setupCli({
             --user "${user}" \
             --password "${password}" \
             --output-file "${output.path}" \
+            --publish=false \
             ${repositoryPath}
         `);
       yield spawn(
@@ -121,6 +122,6 @@ export function* setupCli({
       yield scan.expect();
 
       return JSON.parse(fs.readFileSync(`${output.path}`, "utf-8"));
-    },
+    }
   };
 }
