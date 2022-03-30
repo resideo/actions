@@ -1,3 +1,4 @@
+import { spawn } from "effection";
 import { exec } from "@effection/process";
 import { join } from "path";
 import * as fs from "fs";
@@ -74,8 +75,8 @@ export type SetupCliReturn = {
 };
 
 async function fileExists(filePath: string) {
-  return new Promise(resolve =>
-    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
+  return new Promise((resolve) =>
+    fs.access(filePath, fs.constants.F_OK, (e) => resolve(!e))
   );
 }
 
@@ -83,7 +84,7 @@ export function* setupCli({
   user,
   password,
   consoleUrl,
-  project
+  project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   const cliPath = join(__dirname, "twistcli");
 
@@ -98,7 +99,7 @@ export function* setupCli({
 
   return {
     scanRepository: function* scanRepository({
-      repositoryPath
+      repositoryPath,
     }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
       const output: FileResult = yield file();
 
@@ -110,10 +111,12 @@ export function* setupCli({
             --output-file "${output.path}" \
             ${repositoryPath}
         `);
+      yield spawn(scan.stdout.forEach(text => console.log(text)));
+      yield spawn(scan.stderr.forEach(text => console.error(text)));
 
       yield scan.expect();
 
       return JSON.parse(fs.readFileSync(`${output.path}`, "utf-8"));
-    }
+    },
   };
 }

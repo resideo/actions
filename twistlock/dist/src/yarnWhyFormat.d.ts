@@ -9,8 +9,6 @@ export interface VulnerabilitiesCategorized {
 export declare function yarmWhyFormat({ message, tag }: {
     message: any;
     tag: any;
-}): Generator<Generator<import("effection").Operation<{
-    [x: string]: unknown;
-}>, VulnerabilityTagged[], unknown>, string, VulnerabilityTagged[]>;
+}): Generator<Generator<import("effection").Operation<unknown[]>, VulnerabilityTagged[], unknown>, string, VulnerabilityTagged[]>;
 export {};
 //# sourceMappingURL=yarnWhyFormat.d.ts.map
