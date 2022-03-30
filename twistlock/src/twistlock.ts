@@ -111,8 +111,12 @@ export function* setupCli({
             --output-file "${output.path}" \
             ${repositoryPath}
         `);
-      yield spawn(scan.stdout.forEach(text => console.log(text)));
-      yield spawn(scan.stderr.forEach(text => console.error(text)));
+      yield spawn(
+        scan.stdout.forEach(text => console.log(text.toString().trim()))
+      );
+      yield spawn(
+        scan.stderr.forEach(text => console.error(text.toString().trim()))
+      );
 
       yield scan.expect();
 
