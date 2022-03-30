@@ -63,7 +63,6 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
           // It might be reporting system-level packages,
           // but when we run those with yarn why, the command fails.
           // This is to avoid these packages.
-          console.log({ messages, errors });
           if (errors.length > 0) {
             const pkgToSkip = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
@@ -80,7 +79,6 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
     )
   );
 
-  console.log({ packagesToDisplay, packagesToSkip });
   // TODO: Remove this and convert errors to a boolean if we don't need this information
   if (packagesToSkip.length > 0) {
     console.warn(
