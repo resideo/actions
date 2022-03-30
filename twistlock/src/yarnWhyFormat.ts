@@ -44,21 +44,28 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
 
           yield spawn(
             command.stdout.forEach((message) => {
-              let stringifiedMessage = message.toString().trim();
-              messages = [...messages, stringifiedMessage];
+              messages = [...messages, message];
             })
           );
           yield spawn(
             command.stderr.forEach((error) => {
-              let stringifiedError = error.toString().trim();
-              if (stringifiedError.match(/^error/i)) {
-                errors = [...errors, stringifiedError];
+              if (
+                error
+                  .toString()
+                  .trim()
+                  .match(/^error/i)
+              ) {
+                errors = [...errors, error];
               }
             })
           );
           yield command.join();
 
-          // Twistlock reports npm packages that are not in yarn.lock. Yarn is a good example of such a package. It might be reporting system-level packages, but when we run those with yarn why, the command fails. this is to avoid these packages.
+          // Twistlock reports npm packages that are not in yarn.lock.
+          // Yarn is a good example of such a package.
+          // It might be reporting system-level packages,
+          // but when we run those with yarn why, the command fails.
+          // This is to avoid these packages.
           if (errors.length) {
             const pkgToSkip = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
@@ -68,7 +75,7 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
             const pkgToDisplay = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
             );
-            pkgToDisplay.yarnWhy = messages;
+            pkgToDisplay.yarnWhy = messages.toString().trim();
             packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
           }
         }
