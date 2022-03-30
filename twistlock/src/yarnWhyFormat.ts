@@ -15,7 +15,7 @@ const yarnWhyAll = function*(twistlockjson) {
   const duplicatesRemoved = twistlockjson.vulnerabilities.reduce((acc, pkg) => {
     if (
       !acc.find(
-        vulnerablePackage =>
+        (vulnerablePackage) =>
           vulnerablePackage.packageName == pkg.packageName || !acc.length
       )
     ) {
@@ -41,14 +41,16 @@ const yarnWhyAll = function*(twistlockjson) {
           const command = yield exec(`yarn why ${pkg}`);
 
           yield spawn(
-            command.stdout.forEach(message => {
-              messages = [...messages, message];
+            command.stdout.forEach((message) => {
+              let stringifiedMessage = message.toString().trim();
+              messages = [...messages, stringifiedMessage];
             })
           );
           yield spawn(
-            command.stderr.forEach(error => {
-              if (error.match(/^error/i)) {
-                errors = [...errors, error];
+            command.stderr.forEach((error) => {
+              let stringifiedError = error.toString().trim();
+              if (stringifiedError.match(/^error/i)) {
+                errors = [...errors, stringifiedError];
               }
             })
           );
@@ -75,7 +77,7 @@ const yarnWhyAll = function*(twistlockjson) {
   if (packagesToSkip.length > 0) {
     console.warn(
       `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
-        .map(pkg => pkg.packageName)
+        .map((pkg) => pkg.packageName)
         .join(", ")}`
     );
   }
@@ -83,14 +85,14 @@ const yarnWhyAll = function*(twistlockjson) {
   return packagesToDisplay;
 };
 
-const sortAndCategorize = afterYarnWhy => {
+const sortAndCategorize = (afterYarnWhy) => {
   return afterYarnWhy.reduce(
     (acc, pkg) => {
-      return acc.map(group => {
+      return acc.map((group) => {
         if (group.severity == pkg.severity) {
           return {
             severity: group.severity,
-            packages: [...group.packages, pkg]
+            packages: [...group.packages, pkg],
           };
         } else {
           return group;
@@ -102,7 +104,7 @@ const sortAndCategorize = afterYarnWhy => {
       { severity: "high", packages: [] },
       { severity: "moderate", packages: [] },
       { severity: "medium", packages: [] },
-      { severity: "low", packages: [] }
+      { severity: "low", packages: [] },
     ]
   );
 };
@@ -111,15 +113,15 @@ const formatComment = (sorted, tag) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
-  const convertArrayForMarkdown = output =>
+  const convertArrayForMarkdown = (output) =>
     output
       .join("")
       .replace(/\n/g, "<br>")
       .replace(/info \r/g, "");
 
-  const htmlTable = rows => {
+  const htmlTable = (rows) => {
     const allRows = rows
-      .map(columns => {
+      .map((columns) => {
         return `<tr>${columns.join("")}</tr>`;
       })
       .join("");
@@ -128,7 +130,7 @@ const formatComment = (sorted, tag) => {
 
   const listOfDependencies = (packages: VulnerabilityTagged[]) => {
     return packages
-      .map(pkg => {
+      .map((pkg) => {
         const {
           cvss,
           description,
@@ -137,7 +139,7 @@ const formatComment = (sorted, tag) => {
           packageName,
           packageVersion,
           status,
-          yarnWhy
+          yarnWhy,
         } = pkg;
 
         const yarnWhyDetails = dropdown(
@@ -162,20 +164,20 @@ const formatComment = (sorted, tag) => {
             "<th>Current Ver.</th>",
             "<th>Status</th>",
             "<th>Severity</th>",
-            "<th>Grace Period</th>"
+            "<th>Grace Period</th>",
           ],
           [
             `<th>${packageVersion}</th>`,
             `<th>${status}</th>`,
             `<th>${cvss}</th>`,
-            `<th>${graceCountdown}</th>`
-          ]
+            `<th>${graceCountdown}</th>`,
+          ],
         ]);
 
         const detailsTable = htmlTable([
           ["<td>Description</td>", `<td>${description}</td>`],
           ["<td>Source</td>", `<td><a href=${link}>Link</a></td>`],
-          ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`]
+          ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`],
         ]);
 
         return dropdown(
@@ -187,7 +189,7 @@ const formatComment = (sorted, tag) => {
   };
 
   const severityTable = sorted
-    .map(group => {
+    .map((group) => {
       if (group.packages.length > 0) {
         return dropdown(
           `${group.severity.toUpperCase()} (${group.packages.length})`,
