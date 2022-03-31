@@ -3,7 +3,11 @@ import * as github from "@actions/github";
 
 export function* postGithubComment(octokit, { message, tag }) {
   if (!github.context.payload.pull_request) {
-    core.setFailed("This action can only be run on pull requests");
+    if (github.context.eventName === "schedule") {
+      console.log("action run on cron, skipping Github comment");
+    } else {
+      core.setFailed("This action can only be run on pull requests");
+    }
   } else {
     const { owner, repo } = github.context.repo;
     const { number } = github.context.payload.pull_request;
