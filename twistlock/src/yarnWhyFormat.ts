@@ -154,9 +154,9 @@ const formatComment = (sorted, tag) => {
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         const graceCountdown = !graceDays
-          ? "no defined resolution period"
+          ? "🤷 no defined resolution period"
           : graceDays >= 0
-          ? `${graceDays} days left`
+          ? `⏳ ${graceDays} days left`
           : `⚠️ ${graceDays} days overdue`;
 
         const summaryTable = htmlTable([
@@ -182,7 +182,7 @@ const formatComment = (sorted, tag) => {
 
         return dropdown(
           `<code>${packageName}</code><span> ${graceCountdown}</span>`,
-          `<br>${summaryTable}${detailsTable}`
+          `\n${summaryTable}${detailsTable}`
         );
       })
       .join("");
@@ -192,8 +192,8 @@ const formatComment = (sorted, tag) => {
     .map((group) => {
       if (group.packages.length > 0) {
         return (
-          `<hr>${group.severity.toUpperCase()} (${group.packages.length})\n` +
-          `${listOfDependencies(group.packages)}<br>`
+          `<hr>\n${group.severity.toUpperCase()} (${group.packages.length})\n` +
+          `${listOfDependencies(group.packages)}\n`
         );
       } else {
         return "";
