@@ -19,20 +19,20 @@ async function main({
   clientId,
   origin,
   callbackUrl,
-  logoutUrl
+  logoutUrl,
 }: Args) {
   try {
     const auth0 = createClient({
       domain,
       clientId: apiClientId,
-      clientSecret: apiClientSecret
+      clientSecret: apiClientSecret,
     });
 
     await addOrigin(auth0, {
       clientId,
       origin: interpolate(origin),
       callbackUrl: interpolate(callbackUrl || origin),
-      logoutUrl: interpolate(logoutUrl || origin)
+      logoutUrl: interpolate(logoutUrl || origin),
     });
 
     core.info(`Origin "${origin}" added to auth0 client "${clientId}"`);
@@ -50,5 +50,5 @@ main({
   clientId: core.getInput("clientId"),
   origin: core.getInput("origin"),
   callbackUrl: core.getInput("callbackUrl"),
-  logoutUrl: core.getInput("logoutUrl")
+  logoutUrl: core.getInput("logoutUrl"),
 });

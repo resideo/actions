@@ -43,7 +43,7 @@ function* run({ command, checkForLog }: CommandExec) {
   );
 }
 
-main(function*() {
+main(function* () {
   try {
     yield withTimeout(
       Number(core.getInput("waitFor")) * 1000,

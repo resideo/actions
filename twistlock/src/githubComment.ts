@@ -12,12 +12,12 @@ export function* postGithubComment(octokit, { message, tag }) {
       owner,
       repo,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      issue_number: number
+      issue_number: number,
     });
 
     const previousComment =
       allComments.data.length > 0 &&
-      allComments.data.find(comment => comment.body.includes(tag));
+      allComments.data.find((comment) => comment.body.includes(tag));
 
     if (previousComment) {
       yield octokit.rest.issues.updateComment({
@@ -25,7 +25,7 @@ export function* postGithubComment(octokit, { message, tag }) {
         repo,
         // eslint-disable-next-line @typescript-eslint/camelcase
         comment_id: previousComment.id,
-        body: `${message}`
+        body: `${message}`,
       });
     } else {
       yield octokit.rest.issues.createComment({
@@ -33,7 +33,7 @@ export function* postGithubComment(octokit, { message, tag }) {
         repo,
         // eslint-disable-next-line @typescript-eslint/camelcase
         issue_number: number,
-        body: `${message}`
+        body: `${message}`,
       });
     }
   }
