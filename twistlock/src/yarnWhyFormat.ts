@@ -12,7 +12,11 @@ export interface VulnerabilitiesCategorized {
 }
 
 const yarnWhyAll = function*(twistlockjson, repositoryPath) {
-  const duplicatesRemoved = twistlockjson.vulnerabilities.reduce((acc, pkg) => {
+  console.dir(twistlockjson);
+  const vulnerabilities = !twistlockjson.vulnerabilities
+    ? twistlockjson.results[0].vulnerabilities
+    : twistlockjson.vulnerabilities;
+  const duplicatesRemoved = vulnerabilities.reduce((acc, pkg) => {
     if (
       !acc.find(
         (vulnerablePackage) =>
