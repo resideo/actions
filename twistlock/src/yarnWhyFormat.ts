@@ -11,7 +11,7 @@ export interface VulnerabilitiesCategorized {
   packages: VulnerabilityTagged[];
 }
 
-const yarnWhyAll = function* (twistlockjson, repositoryPath) {
+const yarnWhyAll = function*(twistlockjson, repositoryPath) {
   const duplicatesRemoved = twistlockjson.vulnerabilities.reduce((acc, pkg) => {
     if (
       !acc.find(
@@ -35,7 +35,7 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   yield all(
     duplicatesRemoved.map(
       ({ packageName: pkg }) =>
-        function* () {
+        function*() {
           let messages: string[] = [];
           let errors: string[] = [];
           const command = yield exec(`yarn why ${pkg}`, {
@@ -152,7 +152,7 @@ const formatComment = (sorted, tag) => {
           convertArrayForMarkdown(yarnWhy)
         );
 
-        const graceDays = !pkg.graceDays ? undefined : parseInt(pkg?.graceDays);
+        const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         const graceCountdown = !graceDays
           ? "no defined resolution period"
           : graceDays >= 0
@@ -220,7 +220,8 @@ export function* yarmWhyFormat({ message, tag, repositoryPath }) {
     message,
     repositoryPath
   );
-  const sorted: VulnerabilitiesCategorized[] =
-    sortAndCategorize(yarnWhyResults);
+  const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
+    yarnWhyResults
+  );
   return formatComment(sorted, tag);
 }
