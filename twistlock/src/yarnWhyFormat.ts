@@ -134,6 +134,7 @@ const formatComment = (sorted, tag) => {
     return `<table>${allRows}</table>`;
   };
 
+  let workflowStatus = "pass";
   const listOfDependencies = (packages: VulnerabilityTagged[]) => {
     return packages
       .map((pkg) => {
@@ -153,11 +154,15 @@ const formatComment = (sorted, tag) => {
         );
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
-        const graceCountdown = !graceDays
-          ? "🤷 no defined resolution period"
-          : graceDays >= 0
-          ? `⏳ ${graceDays} days left`
-          : `⚠️ ${graceDays} days overdue`;
+        let graceCountdown = "🤷 no defined resolution period";
+        if (graceDays) {
+          if (graceDays >= 0) {
+            graceCountdown = `⏳ ${graceDays} days left`;
+          } else {
+            graceCountdown = `⚠️ ${graceDays} days overdue`;
+            workflowStatus = "failed";
+          }
+        }
 
         const summaryTable = htmlTable([
           [
@@ -202,16 +207,20 @@ const formatComment = (sorted, tag) => {
     .join("");
 
   if (severityTable) {
-    return (
-      "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.<br>" +
-      severityTable +
-      tag
-    );
+    return {
+      message:
+        "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
+        severityTable +
+        tag,
+      workflowStatus,
+    };
   } else {
-    return (
-      "You are receiving this comment because there are no dependencies with a security vulnerability" +
-      tag
-    );
+    return {
+      message:
+        "You are receiving this comment because there are no dependencies with a security vulnerability" +
+        tag,
+      workflowStatus,
+    };
   }
 };
 
