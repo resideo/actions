@@ -192,8 +192,8 @@ const formatComment = (sorted, tag) => {
     .map((group) => {
       if (group.packages.length > 0) {
         return (
-          `${group.severity.toUpperCase()} (${group.packages.length})\n` +
-          `<hr>${listOfDependencies(group.packages)}<hr>`
+          `<hr>${group.severity.toUpperCase()} (${group.packages.length})\n` +
+          `${listOfDependencies(group.packages)}<br>`
         );
       } else {
         return "";
