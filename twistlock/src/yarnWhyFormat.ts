@@ -154,14 +154,21 @@ const formatComment = (sorted, tag) => {
         );
 
         // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
-        const graceTime = 30;
+        const graceTime = pkg?.graceDays;
         const fixDiscoveredDate = new Date(discoveredDate);
-        const graceExpiry = fixDiscoveredDate.setDate(
-          fixDiscoveredDate.getDate() + graceTime
-        );
-        const graceDays = Math.floor((graceExpiry - Date.now()) / 86_400_000);
+        const graceExpiry = !graceTime
+          ? null
+          : fixDiscoveredDate.setDate(
+              fixDiscoveredDate.getDate() + parseInt(graceTime)
+            );
+        const graceDays =
+          !graceTime || !graceExpiry
+            ? null
+            : Math.floor((graceExpiry - Date.now()) / 86_400_000);
         const graceCountdown =
-          graceDays >= 0
+          graceDays === null
+            ? "no defined resolution period"
+            : graceDays >= 0
             ? `${graceDays} days left`
             : `⚠️ ${graceDays} days overdue`;
 
@@ -187,7 +194,7 @@ const formatComment = (sorted, tag) => {
         ]);
 
         return dropdown(
-          `<code>${packageName}</code>`,
+          `<code>${packageName}</code><span>${graceCountdown}</span>`,
           `<br>${summaryTable}${detailsTable}`
         );
       })
