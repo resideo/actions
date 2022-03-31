@@ -134,7 +134,7 @@ export function* setupCli({
         scan.stderr.forEach((text) => console.error(text.toString().trim()))
       );
 
-      yield scan.expect();
+      yield scan.join();
       console.log("::endgroup::");
 
       const results = fs.readFileSync(`${output.path}`, "utf-8");
