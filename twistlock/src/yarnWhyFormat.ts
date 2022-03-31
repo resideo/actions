@@ -191,8 +191,8 @@ const formatComment = (sorted, tag) => {
   const severityTable = sorted
     .map((group) => {
       if (group.packages.length > 0) {
-        return dropdown(
-          `${group.severity.toUpperCase()} (${group.packages.length})`,
+        return (
+          `${group.severity.toUpperCase()} (${group.packages.length})\n` +
           `<hr>${listOfDependencies(group.packages)}<hr>`
         );
       } else {
