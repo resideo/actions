@@ -12,7 +12,6 @@ export interface VulnerabilitiesCategorized {
 }
 
 const yarnWhyAll = function*(twistlockjson, repositoryPath) {
-  console.dir(twistlockjson);
   const vulnerabilities = !twistlockjson.vulnerabilities
     ? twistlockjson.results[0].vulnerabilities
     : twistlockjson.vulnerabilities;
