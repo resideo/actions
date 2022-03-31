@@ -181,7 +181,7 @@ const formatComment = (sorted, tag) => {
         ]);
 
         return dropdown(
-          `<code>${packageName}</code><span>${graceCountdown}</span>`,
+          `<code>${packageName}</code><span> ${graceCountdown}</span>`,
           `<br>${summaryTable}${detailsTable}`
         );
       })
