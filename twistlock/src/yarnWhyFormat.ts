@@ -140,7 +140,6 @@ const formatComment = (sorted, tag) => {
         const {
           cvss,
           description,
-          discoveredDate,
           link,
           packageName,
           packageVersion,
@@ -153,24 +152,14 @@ const formatComment = (sorted, tag) => {
           convertArrayForMarkdown(yarnWhy)
         );
 
-        // The grace time interval is hard coded for now. We should eventually be getting this value from the twistlock CLI response.
-        const graceTime = pkg?.graceDays;
-        const fixDiscoveredDate = new Date(discoveredDate);
-        const graceExpiry = !graceTime
-          ? null
-          : fixDiscoveredDate.setDate(
-              fixDiscoveredDate.getDate() + parseInt(graceTime)
-            );
-        const graceDays =
-          !graceTime || !graceExpiry
-            ? null
-            : Math.floor((graceExpiry - Date.now()) / 86_400_000);
-        const graceCountdown =
-          graceDays === null
-            ? "no defined resolution period"
-            : graceDays >= 0
-            ? `${graceDays} days left`
-            : `⚠️ ${graceDays} days overdue`;
+        const graceDays = !pkg?.graceDays
+          ? undefined
+          : parseInt(pkg?.graceDays);
+        const graceCountdown = !graceDays
+          ? "no defined resolution period"
+          : graceDays >= 0
+          ? `${graceDays} days left`
+          : `⚠️ ${graceDays} days overdue`;
 
         const summaryTable = htmlTable([
           [
