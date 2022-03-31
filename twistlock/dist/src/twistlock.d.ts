@@ -30,6 +30,7 @@ export interface TwistlockRun {
     consoleUrl: string;
     project: string;
     repositoryPath: string;
+    image: string;
     octokit: InstanceType<typeof GitHub>;
 }
 export interface TwistlockResults {
@@ -55,6 +56,7 @@ interface DownloadCliParams {
 }
 interface ScanRepositoryParams {
     repositoryPath: string;
+    image: string;
 }
 export declare type SetupCliReturn = {
     scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;

@@ -39,6 +39,7 @@ export interface TwistlockRun {
   consoleUrl: string;
   project: string;
   repositoryPath: string;
+  image: string;
   octokit: InstanceType<typeof GitHub>;
 }
 
@@ -67,6 +68,7 @@ interface DownloadCliParams {
 
 interface ScanRepositoryParams {
   repositoryPath: string;
+  image: string;
 }
 
 export type SetupCliReturn = {
@@ -101,19 +103,30 @@ export function* setupCli({
   return {
     scanRepository: function* scanRepository({
       repositoryPath,
+      image,
     }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
       const output: FileResult = yield file();
 
       console.log("::group::scan");
-      const scan = yield exec(`${cliPath} coderepo scan \
+      const scan = yield exec(
+        !image
+          ? `${cliPath} coderepo scan \
             --project "${project}" \
             --address "${consoleUrl}" \
             --user "${user}" \
             --password "${password}" \
             --output-file "${output.path}" \
-            --publish=false \
             ${repositoryPath}
-        `);
+        `
+          : `${cliPath} images scan \
+            --project "${project}" \
+            --address "${consoleUrl}" \
+            --user "${user}" \
+            --password "${password}" \
+            --output-file "${output.path}" \
+            ${image}
+        `
+      );
       yield spawn(
         scan.stdout.forEach((text) => console.log(text.toString().trim()))
       );

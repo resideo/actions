@@ -11,6 +11,9 @@ inputs:
   repositoryPath:
     description: The path to the source code to scan.
     required: false
+  image:
+    description: For a docker image scan, The path to the source code to scan.
+    required: false
   username:
     description: User for authenticating with Prisma Cloud Console.
     required: true

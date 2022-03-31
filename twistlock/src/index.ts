@@ -13,6 +13,7 @@ export function* run({
   consoleUrl,
   project,
   repositoryPath,
+  image,
   octokit,
 }: TwistlockRun) {
   const twistcli: SetupCliReturn = yield setupCli({
@@ -25,6 +26,7 @@ export function* run({
   console.log(`running in ${repositoryPath}`);
   const results: TwistlockResults = yield twistcli.scanRepository({
     repositoryPath,
+    image,
   });
 
   const { message, workflowStatus } = yield yarmWhyFormat({
