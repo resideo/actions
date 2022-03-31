@@ -152,9 +152,7 @@ const formatComment = (sorted, tag) => {
           convertArrayForMarkdown(yarnWhy)
         );
 
-        const graceDays = !pkg?.graceDays
-          ? undefined
-          : parseInt(pkg?.graceDays);
+        const graceDays = !pkg.graceDays ? undefined : parseInt(pkg?.graceDays);
         const graceCountdown = !graceDays
           ? "no defined resolution period"
           : graceDays >= 0
