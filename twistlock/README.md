@@ -1,6 +1,6 @@
 # Twistlock Action
 
-Run Twistlock to list dependencies that have security vulnerabilities.
+Run Twistlock to list dependencies that have security vulnerabilities. Twistlock will look in module folders and the package file. In the case of Nodejs, please run `yarn install`, etc., before this action.
 
 ## Usage
 
@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: yarn install
       - uses: resideo/actions/twistlock@master
         with:
           project: Titan-QA
@@ -40,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - run: yarn install
     - uses: resideo/actions/twistlock@master
       with:
         project: Titan-QA
@@ -66,7 +68,7 @@ jobs:
     name: Job Name
     runs-on: ubuntu-latest
     steps:
-      - run: docker pull node:14
+      - run: docker pull node:14 # module dependencies should already be on the image
       - name: Run Twistlock
         uses: resideo/actions/twistlock@master
         with:
