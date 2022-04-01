@@ -103,6 +103,7 @@ export function* setupCli({
   if (!(yield fileExists(cliPath))) {
     yield exec(`curl \
             --insecure \
+            --user "${user}:${password}" \
             --output ${cliPath} \
             "${consoleUrl}/api/v1/util/twistcli"`).expect();
     yield exec(`chmod +x ${cliPath}`).expect();
