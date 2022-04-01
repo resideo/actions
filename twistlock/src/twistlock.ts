@@ -120,8 +120,8 @@ export function* setupCli({
         ? `${cliPath} coderepo scan ` +
           `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
-          // `--user "${user}" ` +
-          // `--password "${password}" ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
           // `--token ${token} ` +
           `--publish=false ` +
           `--output-file "${output.path}" ` +
