@@ -108,7 +108,7 @@ export function* setupCli({
       `curl ` +
         `--insecure ` +
         // `--user "${user}:${password}" ` +
-        `--token ${token} ` +
+        // `--token ${token} ` +
         `--output ${cliPath} ` +
         `"${consoleUrl}/api/v1/util/twistcli"`
     ).expect();
