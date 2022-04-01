@@ -42,6 +42,7 @@ export function* postGithubComment(octokit, { message, tag }) {
         });
       }
     } catch (error) {
+      console.error("error posting the Github comment");
       console.error(error);
       core.setFailed(error as string);
     }
