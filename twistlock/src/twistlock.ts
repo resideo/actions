@@ -130,7 +130,6 @@ export function* setupCli({
           `--user "${user}" ` +
           `--password "${password}" ` +
           // `--token ${token} ` +
-          // `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
@@ -138,7 +137,7 @@ export function* setupCli({
           `--address "${consoleUrl}" ` +
           `--user "${user}" ` +
           `--password "${password}" ` +
-          `--token ${token} ` +
+          // `--token ${token} ` +
           `--output-file "${output.path}" ` +
           `${image}`;
 
