@@ -6,7 +6,10 @@ export declare function run({ user, password, token, consoleUrl, project, reposi
     workflowStatus: string;
 }, (import("./twistlock").Vulnerability & {
     yarnWhy?: string[] | undefined;
-})[]> | Generator<any, void, unknown>, void, SetupCliReturn & TwistlockResults & {
+})[]> | Generator<any, void, unknown>, void, SetupCliReturn & {
+    results: TwistlockResults;
+    code: number;
+} & {
     message: any;
     workflowStatus: any;
 }>;

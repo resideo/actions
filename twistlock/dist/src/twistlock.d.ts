@@ -35,19 +35,22 @@ export interface TwistlockRun {
     octokit: InstanceType<typeof GitHub>;
 }
 export interface TwistlockResults {
-    repository: string;
-    passed: boolean;
-    packages: {
-        type: string;
-        name: string;
-        version: string;
-        path: string;
-        license: string[];
-    }[];
-    complianceIssues: unknown;
-    complianceDistribution: Distribution;
-    vulnerabilities: Vulnerability[];
-    vulnerabilityDistribution: Distribution;
+    code: number;
+    results: {
+        repository: string;
+        passed: boolean;
+        packages: {
+            type: string;
+            name: string;
+            version: string;
+            path: string;
+            license: string[];
+        }[];
+        complianceIssues: unknown;
+        complianceDistribution: Distribution;
+        vulnerabilities: Vulnerability[];
+        vulnerabilityDistribution: Distribution;
+    };
 }
 interface DownloadCliParams {
     user?: string;

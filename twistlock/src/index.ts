@@ -26,10 +26,11 @@ export function* run({
   });
 
   console.log(`running in ${repositoryPath}`);
-  const results: TwistlockResults = yield twistcli.scanRepository({
-    repositoryPath,
-    image,
-  });
+  const { results, code }: { results: TwistlockResults; code: number } =
+    yield twistcli.scanRepository({
+      repositoryPath,
+      image,
+    });
 
   const { message, workflowStatus } = yield yarmWhyFormat({
     message: results,
@@ -43,4 +44,8 @@ export function* run({
   yield postGithubComment(octokit, { message, tag });
   if (workflowStatus !== "pass")
     core.setFailed("One or more packages have an overdue security resolution.");
+  if (code !== 0)
+    core.setFailed(
+      `CLI exited with code ${code}. This implies there may be compliance issues.`
+    );
 }

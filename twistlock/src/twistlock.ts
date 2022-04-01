@@ -45,19 +45,22 @@ export interface TwistlockRun {
 }
 
 export interface TwistlockResults {
-  repository: string;
-  passed: boolean;
-  packages: {
-    type: string;
-    name: string;
-    version: string;
-    path: string;
-    license: string[];
-  }[];
-  complianceIssues: unknown;
-  complianceDistribution: Distribution;
-  vulnerabilities: Vulnerability[];
-  vulnerabilityDistribution: Distribution;
+  code: number;
+  results: {
+    repository: string;
+    passed: boolean;
+    packages: {
+      type: string;
+      name: string;
+      version: string;
+      path: string;
+      license: string[];
+    }[];
+    complianceIssues: unknown;
+    complianceDistribution: Distribution;
+    vulnerabilities: Vulnerability[];
+    vulnerabilityDistribution: Distribution;
+  };
 }
 
 interface DownloadCliParams {
@@ -153,7 +156,7 @@ export function* setupCli({
 
       const results = fs.readFileSync(`${output.path}`, "utf-8");
 
-      return JSON.parse(results);
+      return { results: JSON.parse(results), code: result.code };
     },
   };
 }
