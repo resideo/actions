@@ -116,9 +116,8 @@ export function* setupCli({
       const output: FileResult = yield file();
 
       console.log("::group::scan");
-      const scan = yield exec(
-        !image
-          ? `${cliPath} coderepo scan \
+      const twistCommand = !image
+        ? `${cliPath} coderepo scan \
             --project "${project}" \
             --address "${consoleUrl}" \
             ${
@@ -129,7 +128,7 @@ export function* setupCli({
             --output-file "${output.path}" \
             ${repositoryPath}
         `
-          : `${cliPath} images scan \
+        : `${cliPath} images scan \
             --project "${project}" \
             --address "${consoleUrl}" \
             ${
@@ -139,8 +138,10 @@ export function* setupCli({
             } \
             --output-file "${output.path}" \
             ${image}
-        `
-      );
+        `;
+
+      console.log(twistCommand);
+      const scan = yield exec(twistCommand);
       yield spawn(
         scan.stdout.forEach((text) => console.log(text.toString().trim()))
       );
