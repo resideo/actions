@@ -139,7 +139,6 @@ export function* setupCli({
           `--output-file "${output.path}" ` +
           `${image}`;
 
-      console.log(twistCommand);
       const scan = yield exec(twistCommand);
       yield spawn(
         scan.stdout.forEach((text) => console.log(text.toString().trim()))
@@ -148,7 +147,8 @@ export function* setupCli({
         scan.stderr.forEach((text) => console.error(text.toString().trim()))
       );
 
-      yield scan.join();
+      const result = yield scan.join();
+      console.dir(result);
       console.log("::endgroup::");
 
       const results = fs.readFileSync(`${output.path}`, "utf-8");
