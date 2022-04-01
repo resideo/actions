@@ -123,7 +123,7 @@ export function* setupCli({
           `--address "${consoleUrl}" ` +
           `--user "${user}" ` +
           `--password "${password}" ` +
-          // `--token ${token} ` +
+          `--token ${token} ` +
           `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
