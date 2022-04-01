@@ -120,21 +120,17 @@ export function* setupCli({
         ? `${cliPath} coderepo scan ` +
           `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
-          `${
-            !token
-              ? `--user "${user}" --password "${password}"`
-              : `--token ${token}`
-          } ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
+          `--token ${token} ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
           `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
-          `${
-            !token
-              ? `--user "${user}" --password "${password}"`
-              : `--token ${token}`
-          } ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
+          `--token ${token} ` +
           `--output-file "${output.path}" ` +
           `${image}`;
 
