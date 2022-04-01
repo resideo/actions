@@ -34,8 +34,9 @@ export interface Distribution {
 }
 
 export interface TwistlockRun {
-  user: string;
-  password: string;
+  user?: string;
+  password?: string;
+  token?: string;
   consoleUrl: string;
   project: string;
   repositoryPath: string;
@@ -60,8 +61,9 @@ export interface TwistlockResults {
 }
 
 interface DownloadCliParams {
-  user: string;
-  password: string;
+  user?: string;
+  password?: string;
+  token?: string;
   consoleUrl: string;
   project: string;
 }
@@ -86,15 +88,26 @@ async function fileExists(filePath: string) {
 export function* setupCli({
   user,
   password,
+  token,
   consoleUrl,
   project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
+  if (!token) {
+    if (!user || !password)
+      throw new Error(
+        "username and password need to be input if not using token"
+      );
+  }
   const cliPath = join(__dirname, "twistcli");
 
   if (!(yield fileExists(cliPath))) {
     yield exec(`curl \
             --insecure \
-            --user "${user}:${password}" \
+            ${
+              !token
+                ? `--user "${user}:${password}"`
+                : `-H 'Authorization: Bearer ${token}'`
+            } \
             --output ${cliPath} \
             "${consoleUrl}/api/v1/util/twistcli"`).expect();
     yield exec(`chmod +x ${cliPath}`).expect();
@@ -113,16 +126,22 @@ export function* setupCli({
           ? `${cliPath} coderepo scan \
             --project "${project}" \
             --address "${consoleUrl}" \
-            --user "${user}" \
-            --password "${password}" \
+            ${
+              !token
+                ? `--user "${user}" --password "${password}"`
+                : `--token ${token}`
+            } \
             --output-file "${output.path}" \
             ${repositoryPath}
         `
           : `${cliPath} images scan \
             --project "${project}" \
             --address "${consoleUrl}" \
-            --user "${user}" \
-            --password "${password}" \
+            ${
+              !token
+                ? `--user "${user}" --password "${password}"`
+                : `--token ${token}`
+            } \
             --output-file "${output.path}" \
             ${image}
         `

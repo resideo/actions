@@ -25,8 +25,9 @@ export interface Distribution {
     total: number;
 }
 export interface TwistlockRun {
-    user: string;
-    password: string;
+    user?: string;
+    password?: string;
+    token?: string;
     consoleUrl: string;
     project: string;
     repositoryPath: string;
@@ -49,8 +50,9 @@ export interface TwistlockResults {
     vulnerabilityDistribution: Distribution;
 }
 interface DownloadCliParams {
-    user: string;
-    password: string;
+    user?: string;
+    password?: string;
+    token?: string;
     consoleUrl: string;
     project: string;
 }
@@ -61,6 +63,6 @@ interface ScanRepositoryParams {
 export declare type SetupCliReturn = {
     scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;
 };
-export declare function setupCli({ user, password, consoleUrl, project, }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
+export declare function setupCli({ user, password, token, consoleUrl, project, }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
 export {};
 //# sourceMappingURL=twistlock.d.ts.map

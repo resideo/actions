@@ -10,6 +10,7 @@ const tag =
 export function* run({
   user,
   password,
+  token,
   consoleUrl,
   project,
   repositoryPath,
@@ -19,6 +20,7 @@ export function* run({
   const twistcli: SetupCliReturn = yield setupCli({
     user,
     password,
+    token,
     consoleUrl,
     project,
   });

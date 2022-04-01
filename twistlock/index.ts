@@ -13,6 +13,7 @@ main(
   run({
     user: core.getInput("username"),
     password: core.getInput("password"),
+    token: core.getInput("token"),
     consoleUrl: core.getInput("consoleURL"),
     project: core.getInput("project"),
     repositoryPath:

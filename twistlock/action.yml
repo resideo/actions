@@ -16,10 +16,10 @@ inputs:
     required: false
   username:
     description: User for authenticating with Prisma Cloud Console.
-    required: true
   password:
     description: Password for authenticating with Prisma Cloud Console.
-    required: true
+  token:
+    description: Token for authenticating with Prisma Cloud Console. Used instead of the username/password.
 
 runs:
   using: "node12"
