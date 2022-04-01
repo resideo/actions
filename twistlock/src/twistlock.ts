@@ -122,8 +122,8 @@ export function* setupCli({
           `--address "${consoleUrl}" ` +
           `${
             !token
-              ? `--user "${user}" --password "${password}" `
-              : `--token ${token} `
+              ? `--user "${user}" --password "${password}"`
+              : `--token ${token}`
           } ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
@@ -132,10 +132,10 @@ export function* setupCli({
           `--address "${consoleUrl}" ` +
           `${
             !token
-              ? `--user "${user}" --password "${password}" `
-              : `--token ${token} `
-          }` +
-          +`--output-file "${output.path}" ` +
+              ? `--user "${user}" --password "${password}"`
+              : `--token ${token}`
+          } ` +
+          `--output-file "${output.path}" ` +
           `${image}`;
 
       console.log(twistCommand);
