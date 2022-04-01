@@ -101,11 +101,14 @@ export function* setupCli({
   const cliPath = join(__dirname, "twistcli");
 
   if (!(yield fileExists(cliPath))) {
-    yield exec(`curl \
-            --insecure \
-            --user "${user}:${password}" \
-            --output ${cliPath} \
-            "${consoleUrl}/api/v1/util/twistcli"`).expect();
+    yield exec(
+      `curl ` +
+        `--insecure ` +
+        `--user "${user}:${password}" ` +
+        // `--token ${token} ` +
+        `--output ${cliPath} ` +
+        `"${consoleUrl}/api/v1/util/twistcli"`
+    ).expect();
     yield exec(`chmod +x ${cliPath}`).expect();
   }
 
@@ -121,9 +124,9 @@ export function* setupCli({
         ? `${cliPath} coderepo scan ` +
           `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
-          // `--user "${user}" ` +
-          // `--password "${password}" ` +
-          `--token ${token} ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
+          // `--token ${token} ` +
           `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
