@@ -112,6 +112,9 @@ export function* setupCli({
     yield exec(
       `curl ` +
         `--insecure ` +
+        // this appears to require the user:pass combination
+        // if you use the token (or nothing) it downloads a CLI
+        // that will execute and return code 0 (and nothing else?)
         `--user "${user}:${password}" ` +
         // `--user ${token} ` +
         `--output ${cliPath} ` +
@@ -134,9 +137,16 @@ export function* setupCli({
           `--address "${consoleUrl}" ` +
           `--user "${user}" ` +
           `--password "${password}" ` +
+          // token appears to work here, but
+          //   not when downloading the CLI, so not
+          //   allowing use of the token at the current time
           // `--token ${token} ` +
-          // `--publish=false ` +
-          // `--output-file "${output.path}" ` +
+          // with publish=true (the default), it does not create
+          //   an output file when you specify it
+          // with publish=true and no output file specified
+          //   you get a 500 internal server error
+          `--publish=false ` +
+          `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
           `--project "${project}" ` +
