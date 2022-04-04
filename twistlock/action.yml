@@ -18,8 +18,8 @@ inputs:
     description: User for authenticating with Prisma Cloud Console.
   password:
     description: Password for authenticating with Prisma Cloud Console.
-  twistToken:
-    description: Token for authenticating with Prisma Cloud Console. Used instead of the username/password.
+  # twistToken:
+  #   description: Token for authenticating with Prisma Cloud Console. Used instead of the username/password.
 
 runs:
   using: "node12"
