@@ -112,7 +112,7 @@ export function* setupCli({
     yield exec(
       `curl ` +
         `--insecure ` +
-        // `--user "${user}:${password}" ` +
+        `--user "${user}:${password}" ` +
         // `--token ${token} ` +
         `--output ${cliPath} ` +
         `"${consoleUrl}/api/v1/util/twistcli"`
