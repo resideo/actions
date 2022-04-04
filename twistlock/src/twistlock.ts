@@ -8,7 +8,7 @@ const fs = fsDefault.promises;
 
 import { file, FileResult } from "tmp-promise";
 import { GitHub } from "@actions/github/lib/utils";
-import artifact from "@actions/artifact";
+import { create as artifactCreate } from "@actions/artifact";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
 
@@ -165,7 +165,7 @@ export function* setupCli({
       try {
         results = yield fs.readFile(`${output.path}`, { encoding: "utf-8" });
 
-        const artifactClient = artifact.create();
+        const artifactClient = artifactCreate();
         const artifactName = "twistcli-output.txt";
         const files = [output.path];
         const rootDirectory = "/tmp";
