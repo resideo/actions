@@ -136,7 +136,7 @@ export function* setupCli({
           `--password "${password}" ` +
           // `--token ${token} ` +
           // `--publish=false ` +
-          `--output-file "${output.path}" ` +
+          // `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
           `--project "${project}" ` +
