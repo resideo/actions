@@ -1,9 +1,14 @@
 import { spawn } from "effection";
 import { exec } from "@effection/process";
+
 import { join } from "path";
-import * as fs from "fs";
+import { default as fsDefault } from "fs";
+// this is compatible with node@12+
+const fs = fsDefault.promises;
+
 import { file, FileResult } from "tmp-promise";
 import { GitHub } from "@actions/github/lib/utils";
+import artifact from "@actions/artifact";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
 
@@ -84,7 +89,7 @@ export type SetupCliReturn = {
 
 async function fileExists(filePath: string) {
   return new Promise((resolve) =>
-    fs.access(filePath, fs.constants.F_OK, (e) => resolve(!e))
+    fsDefault.access(filePath, fsDefault.constants.F_OK, (e) => resolve(!e))
   );
 }
 
@@ -153,9 +158,31 @@ export function* setupCli({
       console.dir(result);
       console.log("::endgroup::");
 
-      const results = fs.readFileSync(`${output.path}`, "utf-8");
+      let results;
 
-      return { results: JSON.parse(results), code: result.code };
+      try {
+        results = yield fs.readFile(`${output.path}`, { encoding: "utf-8" });
+
+        const artifactClient = artifact.create();
+        const artifactName = "twistcli-output.txt";
+        const files = [output.path];
+        const rootDirectory = "/tmp";
+        const options = {
+          continueOnError: true,
+        };
+
+        const uploadResult = yield artifactClient.uploadArtifact(
+          artifactName,
+          files,
+          rootDirectory,
+          options
+        );
+        console.dir(uploadResult);
+
+        return { results: JSON.parse(results), code: result.code };
+      } catch (error: any) {
+        throw new Error(error);
+      }
     },
   };
 }

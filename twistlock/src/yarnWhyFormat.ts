@@ -11,7 +11,7 @@ export interface VulnerabilitiesCategorized {
   packages: VulnerabilityTagged[];
 }
 
-const yarnWhyAll = function*(twistlockjson, repositoryPath) {
+const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   const vulnerabilities = !twistlockjson.vulnerabilities
     ? twistlockjson.results[0].vulnerabilities
     : twistlockjson.vulnerabilities;
@@ -38,7 +38,7 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
   yield all(
     duplicatesRemoved.map(
       ({ packageName: pkg }) =>
-        function*() {
+        function* () {
           let messages: string[] = [];
           let errors: string[] = [];
           const command = yield exec(`yarn why ${pkg}`, {
@@ -61,7 +61,7 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
           );
           yield command.join();
 
-          // Twistlock reports npm packages that are not in yarn.lock.
+          // Twistlock may report npm packages that are not in yarn.lock.
           // Yarn is a good example of such a package.
           // It might be reporting system-level packages,
           // but when we run those with yarn why, the command fails.
@@ -82,7 +82,6 @@ const yarnWhyAll = function*(twistlockjson, repositoryPath) {
     )
   );
 
-  // TODO: Remove this and convert errors to a boolean if we don't need this information
   if (packagesToSkip.length > 0) {
     console.warn(
       `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
@@ -232,8 +231,7 @@ export function* yarmWhyFormat({ message, tag, repositoryPath }) {
     message,
     repositoryPath
   );
-  const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
-    yarnWhyResults
-  );
+  const sorted: VulnerabilitiesCategorized[] =
+    sortAndCategorize(yarnWhyResults);
   return formatComment(sorted, tag);
 }
