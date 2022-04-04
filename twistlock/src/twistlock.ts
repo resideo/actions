@@ -135,7 +135,7 @@ export function* setupCli({
           `--user "${user}" ` +
           `--password "${password}" ` +
           // `--token ${token} ` +
-          `--publish=false` +
+          `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
@@ -144,7 +144,7 @@ export function* setupCli({
           `--user "${user}" ` +
           `--password "${password}" ` +
           // `--token ${token} ` +
-          // `--publish=false` +
+          // `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${image}`;
 
@@ -163,6 +163,7 @@ export function* setupCli({
       let results;
 
       try {
+        console.log("::group::upload artifact");
         results = yield fs.readFile(`${output.path}`, { encoding: "utf-8" });
 
         const artifactClient = artifactCreate();
@@ -180,6 +181,7 @@ export function* setupCli({
           options
         );
         console.dir(uploadResult);
+        console.log("::endgroup::");
 
         return { results: JSON.parse(results), code: result.code };
       } catch (error: any) {
