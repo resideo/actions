@@ -2,6 +2,8 @@
 
 Run Twistlock to list dependencies that have security vulnerabilities. Twistlock will look in module folders and the package file. In the case of Nodejs, please run `yarn install`, etc., before this action.
 
+The `code repo` scan which runs by default scans the [following manifest files](https://docs.paloaltonetworks.com/prisma/prisma-cloud/prisma-cloud-admin-compute/vulnerability_management/code_repo_scanning.html): `package.json`, `package-lock.json`, `npm-shrinkwrap.json`, `bower.json`.
+
 ## Usage
 
 ### Code Repo Scan
