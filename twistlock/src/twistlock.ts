@@ -112,8 +112,8 @@ export function* setupCli({
     yield exec(
       `curl ` +
         `--insecure ` +
-        `--user "${user}:${password}" ` +
-        // `--token ${token} ` +
+        // `--user "${user}:${password}" ` +
+        `--token ${token} ` +
         `--output ${cliPath} ` +
         `"${consoleUrl}/api/v1/util/twistcli"`
     ).expect();
@@ -132,9 +132,9 @@ export function* setupCli({
         ? `${cliPath} coderepo scan ` +
           `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
-          `--user "${user}" ` +
-          `--password "${password}" ` +
-          // `--token ${token} ` +
+          // `--user "${user}" ` +
+          // `--password "${password}" ` +
+          `--token ${token} ` +
           `--publish=false ` +
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
