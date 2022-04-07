@@ -15,18 +15,18 @@ async function main({
   apiClientId,
   apiClientSecret,
   clientId,
-  origin
+  origin,
 }: Args) {
   try {
     const auth0 = createClient({
       domain,
       clientId: apiClientId,
-      clientSecret: apiClientSecret
+      clientSecret: apiClientSecret,
     });
 
     await removeOrigin(auth0, {
       clientId,
-      origin: interpolate(origin)
+      origin: interpolate(origin),
     });
 
     core.info(`Origin "${origin}" removed from auth0 client "${clientId}"`);
@@ -42,5 +42,5 @@ main({
   apiClientId: core.getInput("apiClientId"),
   apiClientSecret: core.getInput("apiClientSecret"),
   clientId: core.getInput("clientId"),
-  origin: core.getInput("origin")
+  origin: core.getInput("origin"),
 });

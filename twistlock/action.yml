@@ -9,15 +9,17 @@ inputs:
     description: Prisma Cloud Console's URL
     required: true
   repositoryPath:
-    description: Password for authenticating with Prisma Cloud Console.
+    description: The path to the source code to scan.
     required: false
-    default: '.'
+  image:
+    description: For a docker image scan, The path to the source code to scan.
+    required: false
   username:
     description: User for authenticating with Prisma Cloud Console.
-    required: true
   password:
     description: Password for authenticating with Prisma Cloud Console.
-    required: true
+  # twistToken:
+  #   description: Token for authenticating with Prisma Cloud Console. Used instead of the username/password.
 
 runs:
   using: "node12"

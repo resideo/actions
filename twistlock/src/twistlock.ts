@@ -1,8 +1,14 @@
+import { spawn } from "effection";
 import { exec } from "@effection/process";
+
 import { join } from "path";
-import * as fs from "fs";
+import { default as fsDefault } from "fs";
+// this is compatible with node@12+
+const fs = fsDefault.promises;
+
 import { file, FileResult } from "tmp-promise";
 import { GitHub } from "@actions/github/lib/utils";
+import { create as artifactCreate } from "@actions/artifact";
 
 export const SEVERITY_LEVELS = ["critical", "high", "medium", "low"] as const;
 
@@ -21,6 +27,7 @@ export interface Vulnerability {
   publishDate: string;
   discoveredDate: string;
   fixDate: string;
+  graceDays?: string;
 }
 
 export interface Distribution {
@@ -32,39 +39,46 @@ export interface Distribution {
 }
 
 export interface TwistlockRun {
-  user: string;
-  password: string;
+  user?: string;
+  password?: string;
+  token?: string;
   consoleUrl: string;
   project: string;
   repositoryPath: string;
+  image: string;
   octokit: InstanceType<typeof GitHub>;
 }
 
 export interface TwistlockResults {
-  repository: string;
-  passed: boolean;
-  packages: {
-    type: string;
-    name: string;
-    version: string;
-    path: string;
-    license: string[];
-  }[];
-  complianceIssues: unknown;
-  complianceDistribution: Distribution;
-  vulnerabilities: Vulnerability[];
-  vulnerabilityDistribution: Distribution;
+  code: number;
+  results: {
+    repository: string;
+    passed: boolean;
+    packages: {
+      type: string;
+      name: string;
+      version: string;
+      path: string;
+      license: string[];
+    }[];
+    complianceIssues: unknown;
+    complianceDistribution: Distribution;
+    vulnerabilities: Vulnerability[];
+    vulnerabilityDistribution: Distribution;
+  };
 }
 
 interface DownloadCliParams {
-  user: string;
-  password: string;
+  user?: string;
+  password?: string;
+  token?: string;
   consoleUrl: string;
   project: string;
 }
 
 interface ScanRepositoryParams {
   repositoryPath: string;
+  image: string;
 }
 
 export type SetupCliReturn = {
@@ -74,46 +88,115 @@ export type SetupCliReturn = {
 };
 
 async function fileExists(filePath: string) {
-  return new Promise(resolve =>
-    fs.access(filePath, fs.constants.F_OK, e => resolve(!e))
+  return new Promise((resolve) =>
+    fsDefault.access(filePath, fsDefault.constants.F_OK, (e) => resolve(!e))
   );
 }
 
 export function* setupCli({
   user,
   password,
+  token,
   consoleUrl,
-  project
+  project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
+  if (!token) {
+    if (!user || !password)
+      throw new Error(
+        "username and password need to be input if not using token"
+      );
+  }
   const cliPath = join(__dirname, "twistcli");
 
   if (!(yield fileExists(cliPath))) {
-    yield exec(`curl \
-            --insecure \
-            --user "${user}:${password}" \
-            --output ${cliPath} \
-            "${consoleUrl}/api/v1/util/twistcli"`).expect();
+    yield exec(
+      `curl ` +
+        `--insecure ` +
+        // this appears to require the user:pass combination
+        // if you use the token (or nothing) it downloads a CLI
+        // that will execute and return code 0 (and nothing else?)
+        `--user "${user}:${password}" ` +
+        // `--user ${token} ` +
+        `--output ${cliPath} ` +
+        `"${consoleUrl}/api/v1/util/twistcli"`
+    ).expect();
     yield exec(`chmod +x ${cliPath}`).expect();
   }
 
   return {
     scanRepository: function* scanRepository({
-      repositoryPath
+      repositoryPath,
+      image,
     }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
       const output: FileResult = yield file();
 
-      const scan = yield exec(`${cliPath} coderepo scan \
-            --project "${project}" \
-            --address "${consoleUrl}" \
-            --user "${user}" \
-            --password "${password}" \
-            --output-file "${output.path}" \
-            ${repositoryPath}
-        `);
+      console.log("::group::scan");
+      const twistCommand = !image
+        ? `${cliPath} coderepo scan ` +
+          `--project "${project}" ` +
+          `--address "${consoleUrl}" ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
+          // token appears to work here, but
+          //   not when downloading the CLI, so not
+          //   allowing use of the token at the current time
+          // `--token ${token} ` +
+          // with publish=true (the default), it does not create
+          //   an output file when you specify it
+          // with publish=true and no output file specified
+          //   you get a 500 internal server error
+          `--publish=false ` +
+          `--output-file "${output.path}" ` +
+          `${repositoryPath}`
+        : `${cliPath} images scan ` +
+          `--project "${project}" ` +
+          `--address "${consoleUrl}" ` +
+          `--user "${user}" ` +
+          `--password "${password}" ` +
+          // `--token ${token} ` +
+          // `--publish=false ` +
+          `--output-file "${output.path}" ` +
+          `${image}`;
 
-      yield scan.expect();
+      const scan = yield exec(twistCommand);
+      yield spawn(
+        scan.stdout.forEach((text) => console.log(text.toString().trim()))
+      );
+      yield spawn(
+        scan.stderr.forEach((text) => console.error(text.toString().trim()))
+      );
 
-      return JSON.parse(fs.readFileSync(`${output.path}`, "utf-8"));
-    }
+      const result = yield scan.join();
+      console.dir(result);
+      console.log("::endgroup::");
+
+      let results;
+
+      try {
+        console.log("::group::upload artifact");
+        results = yield fs.readFile(`${output.path}`, { encoding: "utf-8" });
+
+        const artifactClient = artifactCreate();
+        const artifactName = "twistcli-output.txt";
+        const files = [output.path];
+        const rootDirectory = "/tmp";
+        const options = {
+          continueOnError: true,
+        };
+
+        const uploadResult = yield artifactClient.uploadArtifact(
+          artifactName,
+          files,
+          rootDirectory,
+          options
+        );
+        console.dir(uploadResult);
+        console.log("::endgroup::");
+
+        return { results: JSON.parse(results), code: result.code };
+      } catch (error: any) {
+        throw new Error(error);
+      }
+    },
   };
 }

@@ -13,9 +13,12 @@ main(
   run({
     user: core.getInput("username"),
     password: core.getInput("password"),
+    token: core.getInput("twistToken"),
     consoleUrl: core.getInput("consoleURL"),
     project: core.getInput("project"),
-    repositoryPath: core.getInput("repositoryPath"),
-    octokit
+    repositoryPath:
+      core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
+    image: core.getInput("image"),
+    octokit,
   })
 );

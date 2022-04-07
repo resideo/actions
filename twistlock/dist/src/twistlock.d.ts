@@ -15,6 +15,7 @@ export interface Vulnerability {
     publishDate: string;
     discoveredDate: string;
     fixDate: string;
+    graceDays?: string;
 }
 export interface Distribution {
     critical: number;
@@ -24,40 +25,47 @@ export interface Distribution {
     total: number;
 }
 export interface TwistlockRun {
-    user: string;
-    password: string;
+    user?: string;
+    password?: string;
+    token?: string;
     consoleUrl: string;
     project: string;
     repositoryPath: string;
+    image: string;
     octokit: InstanceType<typeof GitHub>;
 }
 export interface TwistlockResults {
-    repository: string;
-    passed: boolean;
-    packages: {
-        type: string;
-        name: string;
-        version: string;
-        path: string;
-        license: string[];
-    }[];
-    complianceIssues: unknown;
-    complianceDistribution: Distribution;
-    vulnerabilities: Vulnerability[];
-    vulnerabilityDistribution: Distribution;
+    code: number;
+    results: {
+        repository: string;
+        passed: boolean;
+        packages: {
+            type: string;
+            name: string;
+            version: string;
+            path: string;
+            license: string[];
+        }[];
+        complianceIssues: unknown;
+        complianceDistribution: Distribution;
+        vulnerabilities: Vulnerability[];
+        vulnerabilityDistribution: Distribution;
+    };
 }
 interface DownloadCliParams {
-    user: string;
-    password: string;
+    user?: string;
+    password?: string;
+    token?: string;
     consoleUrl: string;
     project: string;
 }
 interface ScanRepositoryParams {
     repositoryPath: string;
+    image: string;
 }
 export declare type SetupCliReturn = {
     scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;
 };
-export declare function setupCli({ user, password, consoleUrl, project }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
+export declare function setupCli({ user, password, token, consoleUrl, project, }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
 export {};
 //# sourceMappingURL=twistlock.d.ts.map

@@ -1,9 +1,16 @@
 import { SetupCliReturn, TwistlockResults, TwistlockRun } from "./twistlock";
-export declare function run({ user, password, consoleUrl, project, repositoryPath, octokit }: TwistlockRun): Generator<Generator<any, SetupCliReturn, any> | Generator<any, TwistlockResults, any> | Generator<Generator<import("effection").Operation<{
-    [x: string]: unknown;
-}>, (import("./twistlock").Vulnerability & {
+export declare function run({ user, password, token, consoleUrl, project, repositoryPath, image, octokit, }: TwistlockRun): Generator<Generator<any, SetupCliReturn, any> | Generator<any, TwistlockResults, any> | Generator<Generator<import("effection").Operation<unknown[]>, (import("./twistlock").Vulnerability & {
     yarnWhy?: string[] | undefined;
-})[], unknown>, string, (import("./twistlock").Vulnerability & {
+})[], unknown>, {
+    message: string;
+    workflowStatus: string;
+}, (import("./twistlock").Vulnerability & {
     yarnWhy?: string[] | undefined;
-})[]> | Generator<any, void, unknown>, void, SetupCliReturn & TwistlockResults>;
+})[]> | Generator<any, void, unknown>, void, SetupCliReturn & {
+    results: TwistlockResults;
+    code: number;
+} & {
+    message: any;
+    workflowStatus: any;
+}>;
 //# sourceMappingURL=index.d.ts.map

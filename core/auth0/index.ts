@@ -18,7 +18,7 @@ const appendUrl = (urls: string[] | undefined, url: string) =>
   urls?.includes(url) ? urls : [...(urls || []), url];
 
 const removeUrl = (urls: string[] | undefined, url: string) =>
-  (urls || []).filter(x => !x.includes(url));
+  (urls || []).filter((x) => !x.includes(url));
 
 export const createClient = (
   options: ManagementClientOptions,
@@ -35,7 +35,7 @@ export const addOrigin = async (
     {
       web_origins: appendUrl(client?.web_origins, origin),
       callbacks: appendUrl(client?.callbacks, callbackUrl),
-      allowed_logout_urls: appendUrl(client?.allowed_logout_urls, logoutUrl)
+      allowed_logout_urls: appendUrl(client?.allowed_logout_urls, logoutUrl),
     }
   );
 };
@@ -50,7 +50,7 @@ export const removeOrigin = async (
     {
       web_origins: removeUrl(client?.web_origins, origin),
       callbacks: removeUrl(client?.callbacks, origin),
-      allowed_logout_urls: removeUrl(client?.allowed_logout_urls, origin)
+      allowed_logout_urls: removeUrl(client?.allowed_logout_urls, origin),
     }
   );
 };
