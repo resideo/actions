@@ -15,6 +15,7 @@ export function* run({
   project,
   repositoryPath,
   image,
+  githubComment,
   octokit,
 }: TwistlockRun) {
   const twistcli: SetupCliReturn = yield setupCli({
@@ -41,7 +42,7 @@ export function* run({
   console.log("::group::comment");
   console.dir(message);
   console.log("::endgroup::");
-  yield postGithubComment(octokit, { message, tag });
+  if (githubComment) yield postGithubComment(octokit, { message, tag });
   if (workflowStatus !== "pass")
     core.setFailed("One or more packages have an overdue security resolution.");
   if (code !== 0)

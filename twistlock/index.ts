@@ -19,6 +19,7 @@ main(
     repositoryPath:
       core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
     image: core.getInput("image"),
+    githubComment: core.getInput("githubComment") === "true",
     octokit,
   })
 );

@@ -32,6 +32,7 @@ export interface TwistlockRun {
     project: string;
     repositoryPath: string;
     image: string;
+    githubComment: boolean;
     octokit: InstanceType<typeof GitHub>;
 }
 export interface TwistlockResults {
