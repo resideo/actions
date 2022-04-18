@@ -14,6 +14,10 @@ inputs:
   image:
     description: For a docker image scan, The path to the source code to scan.
     required: false
+  githubComment:
+    description: Determines if a Github comment within a Pull Request will be created and updated.
+    default: true
+    required: false
   username:
     description: User for authenticating with Prisma Cloud Console.
   password:
