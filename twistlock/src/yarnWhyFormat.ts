@@ -29,10 +29,11 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   }, []);
 
   console.log("::group::results");
-  console.dir(duplicatesRemoved);
+  console.dir(vulnerabilities);
   console.log("::endgroup::");
 
   let packagesToSkip: Vulnerability[] = [];
+  let skipPackageMessage = "";
   let packagesToDisplay: VulnerabilityTagged[] = [];
 
   yield all(
@@ -83,14 +84,13 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   );
 
   if (packagesToSkip.length > 0) {
-    console.warn(
-      `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
-        .map((pkg) => pkg.packageName)
-        .join(", ")}`
-    );
+    skipPackageMessage = `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
+      .map((pkg) => pkg.packageName)
+      .join(", ")}`;
+    console.warn(skipPackageMessage);
   }
 
-  return packagesToDisplay;
+  return { packagesToDisplay, packagesToSkip, skipPackageMessage };
 };
 
 const sortAndCategorize = (afterYarnWhy) => {
@@ -117,7 +117,7 @@ const sortAndCategorize = (afterYarnWhy) => {
   );
 };
 
-const formatComment = (sorted, tag) => {
+const formatComment = (sorted, tag, packagesToSkip, skipPackageMessage) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
@@ -195,24 +195,28 @@ const formatComment = (sorted, tag) => {
       .join("");
   };
 
-  const severityTable = sorted
-    .map((group) => {
-      if (group.packages.length > 0) {
-        return (
-          `<hr>\n${group.severity.toUpperCase()} (${group.packages.length})\n` +
-          `${listOfDependencies(group.packages)}\n`
-        );
-      } else {
-        return "";
-      }
-    })
-    .join("");
+  const severityTable =
+    sorted
+      .map((group) => {
+        if (group.packages.length > 0) {
+          return (
+            `<hr>\n${group.severity.toUpperCase()} (${
+              group.packages.length
+            })\n` + `${listOfDependencies(group.packages)}\n`
+          );
+        } else {
+          return "";
+        }
+      })
+      .join("") + "\n<hr>";
 
   if (severityTable) {
     return {
       message:
         "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
         severityTable +
+        "<hr>" +
+        skipPackageMessage +
         tag,
       workflowStatus,
     };
@@ -227,11 +231,16 @@ const formatComment = (sorted, tag) => {
 };
 
 export function* yarmWhyFormat({ message, tag, repositoryPath }) {
-  const yarnWhyResults: VulnerabilityTagged[] = yield yarnWhyAll(
-    message,
-    repositoryPath
-  );
+  const {
+    packagesToDisplay,
+    packagesToSkip,
+    skipPackageMessage,
+  }: {
+    packagesToDisplay: VulnerabilityTagged[];
+    packagesToSkip: Vulnerability[];
+    skipPackageMessage: string;
+  } = yield yarnWhyAll(message, repositoryPath);
   const sorted: VulnerabilitiesCategorized[] =
-    sortAndCategorize(yarnWhyResults);
-  return formatComment(sorted, tag);
+    sortAndCategorize(packagesToDisplay);
+  return formatComment(sorted, tag, packagesToSkip, skipPackageMessage);
 }
