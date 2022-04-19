@@ -68,6 +68,9 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
           // but when we run those with yarn why, the command fails.
           // This is to avoid these packages.
           if (errors.length > 0) {
+            console.log(`::group::${pkg} errors`);
+            console.error(errors);
+            console.log("::endgroup::");
             vulns[pkg].forEach((vuln) => {
               packagesToSkip = [...packagesToSkip, vulnerabilities[vuln.index]];
             });
@@ -103,7 +106,7 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   if (packagesToSkip.length > 0) {
     skipPackageMessage = `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
       .map((pkg) => pkg.packageName)
-      .join(", ")}`;
+      .join(", ")}.<br>`;
     console.warn(skipPackageMessage);
   }
 
