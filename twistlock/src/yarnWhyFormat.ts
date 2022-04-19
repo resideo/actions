@@ -4,6 +4,12 @@ import { Vulnerability } from "./twistlock";
 
 type VulnerabilityTagged = Vulnerability & {
   yarnWhy?: string[];
+  instances: {
+    type: string;
+    name: string;
+    version: string;
+    path: string;
+  }[];
 };
 
 export interface VulnerabilitiesCategorized {
@@ -27,6 +33,9 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
       return acc;
     }
   }, []);
+  const packageList = !twistlockjson.packages
+    ? twistlockjson.results[0].packages
+    : twistlockjson.packages;
 
   console.log("::group::results");
   console.dir(vulnerabilities);
@@ -73,10 +82,20 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
             );
             packagesToSkip = [...packagesToSkip, pkgToSkip];
           } else {
+            const packageInstances = packageList.reduce(
+              (instances, instance) => {
+                if (instance.name === pkg && instance.type === "nodejs") {
+                  instances.push(`${instance.version} at ${instance.path}`);
+                }
+                return instances;
+              },
+              []
+            );
             const pkgToDisplay = duplicatesRemoved.find(
               ({ packageName: name }) => name == pkg
             );
             pkgToDisplay.yarnWhy = messages;
+            pkgToDisplay.instances = packageInstances;
             packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
           }
         }
@@ -117,7 +136,7 @@ const sortAndCategorize = (afterYarnWhy) => {
   );
 };
 
-const formatComment = (sorted, tag, packagesToSkip, skipPackageMessage) => {
+const formatComment = (sorted, tag, skipPackageMessage) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
@@ -148,11 +167,17 @@ const formatComment = (sorted, tag, packagesToSkip, skipPackageMessage) => {
           packageVersion,
           status,
           yarnWhy,
+          instances,
         } = pkg;
 
         const yarnWhyDetails = dropdown(
           "Details",
           convertArrayForMarkdown(yarnWhy)
+        );
+
+        const instanceDetails = dropdown(
+          "Details",
+          convertArrayForMarkdown(instances)
         );
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
@@ -185,6 +210,7 @@ const formatComment = (sorted, tag, packagesToSkip, skipPackageMessage) => {
           ["<td>Description</td>", `<td>${description}</td>`],
           ["<td>Source</td>", `<td><a href=${link}>Link</a></td>`],
           ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`],
+          ["<td>Instances</td>", `<td>${instanceDetails}</td>`],
         ]);
 
         return dropdown(
@@ -233,14 +259,12 @@ const formatComment = (sorted, tag, packagesToSkip, skipPackageMessage) => {
 export function* yarmWhyFormat({ message, tag, repositoryPath }) {
   const {
     packagesToDisplay,
-    packagesToSkip,
     skipPackageMessage,
   }: {
     packagesToDisplay: VulnerabilityTagged[];
-    packagesToSkip: Vulnerability[];
     skipPackageMessage: string;
   } = yield yarnWhyAll(message, repositoryPath);
   const sorted: VulnerabilitiesCategorized[] =
     sortAndCategorize(packagesToDisplay);
-  return formatComment(sorted, tag, packagesToSkip, skipPackageMessage);
+  return formatComment(sorted, tag, skipPackageMessage);
 }
