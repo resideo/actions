@@ -8,17 +8,18 @@ export interface VulnerabilitiesCategorized {
     severity: string;
     packages: VulnerabilityTagged[];
 }
-export declare function yarmWhyFormat({ message, tag, repositoryPath }: {
+export declare function yarnWhyFormat({ message, tag, repositoryPath, scanPathScope, }: {
     message: any;
     tag: any;
     repositoryPath: any;
+    scanPathScope: any;
 }): Generator<Generator<import("effection").Operation<void[]>, {
     packagesToDisplay: VulnerabilityTagged[];
     packagesToSkip: Vulnerability[];
     skipPackageMessage: string;
 }, unknown>, {
     message: string;
-    workflowStatus: string;
+    graceStatus: string;
 }, {
     packagesToDisplay: VulnerabilityTagged[];
     skipPackageMessage: string;

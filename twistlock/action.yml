@@ -22,6 +22,9 @@ inputs:
     description: User for authenticating with Prisma Cloud Console.
   password:
     description: Password for authenticating with Prisma Cloud Console.
+  scanPathScope:
+    description: Comma separate list of paths where vulnerabilities will fail the workflow.
+    required: false
   # twistToken:
   #   description: Token for authenticating with Prisma Cloud Console. Used instead of the username/password.
 

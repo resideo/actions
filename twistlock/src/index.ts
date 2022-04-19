@@ -1,6 +1,6 @@
 import { setupCli } from "./twistlock";
 import { SetupCliReturn, TwistlockResults, TwistlockRun } from "./twistlock";
-import { yarmWhyFormat } from "./yarnWhyFormat";
+import { yarnWhyFormat } from "./yarnWhyFormat";
 import { postGithubComment } from "./githubComment";
 import * as core from "@actions/core";
 
@@ -16,6 +16,7 @@ export function* run({
   repositoryPath,
   image,
   githubComment,
+  scanPathScope,
   octokit,
 }: TwistlockRun) {
   const twistcli: SetupCliReturn = yield setupCli({
@@ -33,20 +34,21 @@ export function* run({
       image,
     });
 
-  const { message, workflowStatus } = yield yarmWhyFormat({
+  const { message, graceStatus } = yield yarnWhyFormat({
     message: results,
     tag,
     repositoryPath,
+    scanPathScope,
   });
 
   console.log("::group::comment");
   console.dir(message);
   console.log("::endgroup::");
   if (githubComment) yield postGithubComment(octokit, { message, tag });
-  if (workflowStatus !== "pass")
+  if (graceStatus !== "pass")
     core.setFailed("One or more packages have an overdue security resolution.");
   if (code !== 0)
-    core.setFailed(
+    core.warning(
       `CLI exited with code ${code}. This implies there may be compliance issues.`
     );
 }

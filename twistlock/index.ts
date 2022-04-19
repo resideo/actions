@@ -20,6 +20,7 @@ main(
       core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
     image: core.getInput("image"),
     githubComment: core.getInput("githubComment") === "true",
+    scanPathScope: core.getInput("scanPathScope")?.split(",") || [],
     octokit,
   })
 );

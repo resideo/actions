@@ -110,31 +110,49 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   return { packagesToDisplay, packagesToSkip, skipPackageMessage };
 };
 
-const sortAndCategorize = (afterYarnWhy) => {
-  return afterYarnWhy.reduce(
-    (acc, pkg) => {
-      return acc.map((group) => {
-        if (group.severity == pkg.severity) {
-          return {
-            severity: group.severity,
-            packages: [...group.packages, pkg],
-          };
-        } else {
-          return group;
-        }
-      });
-    },
-    [
-      { severity: "critical", packages: [] },
-      { severity: "high", packages: [] },
-      { severity: "moderate", packages: [] },
-      { severity: "medium", packages: [] },
-      { severity: "low", packages: [] },
-    ]
-  );
+const withinPathScope = (scanPathScope, pkg) => {
+  if (scanPathScope[0] === "") return true;
+  let within = false;
+  const { versionInstances } = pkg;
+  versionInstances.forEach((instance) => {
+    scanPathScope.forEach((scope) => {
+      if (instance.startsWith(scope)) {
+        within = true;
+      }
+    });
+  });
+  return within;
 };
 
-const formatComment = (sorted, tag, skipPackageMessage) => {
+const sortAndCategorize = (
+  afterYarnWhy,
+  scanPathScope
+): { severity: string; packages: any[] }[] => {
+  const categories: { severity: string; packages: any[] }[] = [
+    { severity: "critical", packages: [] },
+    { severity: "high", packages: [] },
+    { severity: "moderate", packages: [] },
+    { severity: "medium", packages: [] },
+    { severity: "low", packages: [] },
+  ];
+
+  if (scanPathScope[0] !== "")
+    categories.push({ severity: "image (won't fail workflow)", packages: [] });
+
+  return categories.map((category) => {
+    afterYarnWhy.forEach((pkg) => {
+      if (
+        category.severity == pkg.severity &&
+        withinPathScope(scanPathScope, pkg)
+      ) {
+        category.packages.push(pkg);
+      }
+    });
+    return category;
+  });
+};
+
+const formatComment = ({ sorted, tag, skipPackageMessage }) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
@@ -153,8 +171,9 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
     return `<table>${allRows}</table>`;
   };
 
-  let workflowStatus = "pass";
-  const listOfDependencies = (packages: VulnerabilityTagged[]) => {
+  let graceStatus = "pass";
+  const listOfDependencies = (group) => {
+    const { packages } = group;
     return packages
       .map((pkg) => {
         const {
@@ -191,7 +210,7 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
-            workflowStatus = "failed";
+            if (!group.severity.startsWith("image")) graceStatus = "failed";
           }
         }
 
@@ -236,7 +255,7 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
           return (
             `<hr>\n${group.severity.toUpperCase()} (${
               group.packages.length
-            })\n` + `${listOfDependencies(group.packages)}\n`
+            })\n` + `${listOfDependencies(group)}\n`
           );
         } else {
           return "";
@@ -252,19 +271,24 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
         "<hr>" +
         skipPackageMessage +
         tag,
-      workflowStatus,
+      graceStatus,
     };
   } else {
     return {
       message:
         "You are receiving this comment because there are no dependencies with a security vulnerability" +
         tag,
-      workflowStatus,
+      graceStatus,
     };
   }
 };
 
-export function* yarmWhyFormat({ message, tag, repositoryPath }) {
+export function* yarnWhyFormat({
+  message,
+  tag,
+  repositoryPath,
+  scanPathScope,
+}) {
   const {
     packagesToDisplay,
     skipPackageMessage,
@@ -272,7 +296,9 @@ export function* yarmWhyFormat({ message, tag, repositoryPath }) {
     packagesToDisplay: VulnerabilityTagged[];
     skipPackageMessage: string;
   } = yield yarnWhyAll(message, repositoryPath);
-  const sorted: VulnerabilitiesCategorized[] =
-    sortAndCategorize(packagesToDisplay);
-  return formatComment(sorted, tag, skipPackageMessage);
+  const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
+    packagesToDisplay,
+    scanPathScope
+  );
+  return formatComment({ sorted, tag, skipPackageMessage });
 }
