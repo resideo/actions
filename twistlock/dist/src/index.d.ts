@@ -1,13 +1,9 @@
 import { SetupCliReturn, TwistlockResults, TwistlockRun } from "./twistlock";
-export declare function run({ user, password, token, consoleUrl, project, repositoryPath, image, githubComment, octokit, }: TwistlockRun): Generator<Generator<any, SetupCliReturn, any> | Generator<any, TwistlockResults, any> | Generator<Generator<import("effection").Operation<unknown[]>, {
+export declare function run({ user, password, token, consoleUrl, project, repositoryPath, image, githubComment, octokit, }: TwistlockRun): Generator<Generator<any, SetupCliReturn, any> | Generator<any, TwistlockResults, any> | Generator<any, void, unknown> | Generator<Generator<import("effection").Operation<void[]>, {
     packagesToDisplay: (import("./twistlock").Vulnerability & {
         yarnWhy?: string[] | undefined;
-        instances: {
-            type: string;
-            name: string;
-            version: string;
-            path: string;
-        }[];
+        versionInstances: string[];
+        allInstances: string[];
     })[];
     packagesToSkip: import("./twistlock").Vulnerability[];
     skipPackageMessage: string;
@@ -17,15 +13,11 @@ export declare function run({ user, password, token, consoleUrl, project, reposi
 }, {
     packagesToDisplay: (import("./twistlock").Vulnerability & {
         yarnWhy?: string[] | undefined;
-        instances: {
-            type: string;
-            name: string;
-            version: string;
-            path: string;
-        }[];
+        versionInstances: string[];
+        allInstances: string[];
     })[];
     skipPackageMessage: string;
-}> | Generator<any, void, unknown>, void, SetupCliReturn & {
+}>, void, SetupCliReturn & {
     results: TwistlockResults;
     code: number;
 } & {

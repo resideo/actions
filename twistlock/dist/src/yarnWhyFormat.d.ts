@@ -1,12 +1,8 @@
 import { Vulnerability } from "./twistlock";
 declare type VulnerabilityTagged = Vulnerability & {
     yarnWhy?: string[];
-    instances: {
-        type: string;
-        name: string;
-        version: string;
-        path: string;
-    }[];
+    versionInstances: string[];
+    allInstances: string[];
 };
 export interface VulnerabilitiesCategorized {
     severity: string;
@@ -16,7 +12,7 @@ export declare function yarmWhyFormat({ message, tag, repositoryPath }: {
     message: any;
     tag: any;
     repositoryPath: any;
-}): Generator<Generator<import("effection").Operation<unknown[]>, {
+}): Generator<Generator<import("effection").Operation<void[]>, {
     packagesToDisplay: VulnerabilityTagged[];
     packagesToSkip: Vulnerability[];
     skipPackageMessage: string;

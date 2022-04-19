@@ -4,12 +4,8 @@ import { Vulnerability } from "./twistlock";
 
 type VulnerabilityTagged = Vulnerability & {
   yarnWhy?: string[];
-  instances: {
-    type: string;
-    name: string;
-    version: string;
-    path: string;
-  }[];
+  versionInstances: string[];
+  allInstances: string[];
 };
 
 export interface VulnerabilitiesCategorized {
@@ -21,18 +17,13 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   const vulnerabilities = !twistlockjson.vulnerabilities
     ? twistlockjson.results[0].vulnerabilities
     : twistlockjson.vulnerabilities;
-  const duplicatesRemoved = vulnerabilities.reduce((acc, pkg) => {
-    if (
-      !acc.find(
-        (vulnerablePackage) =>
-          vulnerablePackage.packageName == pkg.packageName || !acc.length
-      )
-    ) {
-      return [...acc, pkg];
-    } else {
-      return acc;
-    }
-  }, []);
+
+  const vulns = vulnerabilities.reduce((acc, pkg, index) => {
+    if (!acc[pkg.name]) acc[pkg.name] = [];
+    acc[pkg.name].push({ index, version: pkg.packageVersion });
+    return acc;
+  }, {});
+
   const packageList = !twistlockjson.packages
     ? twistlockjson.results[0].packages
     : twistlockjson.packages;
@@ -46,8 +37,8 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   let packagesToDisplay: VulnerabilityTagged[] = [];
 
   yield all(
-    duplicatesRemoved.map(
-      ({ packageName: pkg }) =>
+    Object.keys(vulns).map(
+      (pkg) =>
         function* () {
           let messages: string[] = [];
           let errors: string[] = [];
@@ -77,26 +68,33 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
           // but when we run those with yarn why, the command fails.
           // This is to avoid these packages.
           if (errors.length > 0) {
-            const pkgToSkip = duplicatesRemoved.find(
-              ({ packageName: name }) => name == pkg
-            );
-            packagesToSkip = [...packagesToSkip, pkgToSkip];
+            vulns[pkg].forEach((vuln) => {
+              packagesToSkip = [...packagesToSkip, vulnerabilities[vuln.index]];
+            });
           } else {
             const packageInstances = packageList.reduce(
               (instances, instance) => {
                 if (instance.name === pkg && instance.type === "nodejs") {
-                  instances.push(`${instance.version} at ${instance.path}`);
+                  instances.push(instance);
                 }
                 return instances;
               },
               []
             );
-            const pkgToDisplay = duplicatesRemoved.find(
-              ({ packageName: name }) => name == pkg
-            );
-            pkgToDisplay.yarnWhy = messages;
-            pkgToDisplay.instances = packageInstances;
-            packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
+
+            vulns[pkg].forEach((vuln) => {
+              const pkgToDisplay = vulnerabilities[vuln.index];
+              pkgToDisplay.yarnWhy = messages;
+              pkgToDisplay.allInstances = packageInstances.map(
+                (instance) => `${instance.version} at ${instance.path}`
+              );
+              pkgToDisplay.versionInstances = packageInstances
+                .filter(
+                  (instance) => instance.version === pkgToDisplay.packageVersion
+                )
+                .map((instance) => instance.path);
+              packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
+            });
           }
         }
     )
@@ -167,7 +165,8 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
           packageVersion,
           status,
           yarnWhy,
-          instances,
+          allInstances,
+          versionInstances,
         } = pkg;
 
         const yarnWhyDetails = dropdown(
@@ -175,9 +174,14 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
           convertArrayForMarkdown(yarnWhy)
         );
 
-        const instanceDetails = dropdown(
+        const curVersionInstanceDetails = dropdown(
           "Details",
-          convertArrayForMarkdown(instances)
+          convertArrayForMarkdown(versionInstances)
+        );
+
+        const allInstanceDetails = dropdown(
+          "Details",
+          convertArrayForMarkdown(allInstances)
         );
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
@@ -210,11 +214,15 @@ const formatComment = (sorted, tag, skipPackageMessage) => {
           ["<td>Description</td>", `<td>${description}</td>`],
           ["<td>Source</td>", `<td><a href=${link}>Link</a></td>`],
           ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`],
-          ["<td>Instances</td>", `<td>${instanceDetails}</td>`],
+          [
+            "<td>Current Version<br>Instance</td>",
+            `<td>${curVersionInstanceDetails}</td>`,
+          ],
+          ["<td>All Instances</td>", `<td>${allInstanceDetails}</td>`],
         ]);
 
         return dropdown(
-          `<code>${packageName}</code><span> ${graceCountdown}</span>`,
+          `<code>${packageName}</code><code>@</code><code>${packageVersion}</code><span> ${graceCountdown}</span>`,
           `\n${summaryTable}${detailsTable}`
         );
       })
