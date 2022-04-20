@@ -297,6 +297,10 @@ export function* yarnWhyFormat({
     packagesToDisplay,
     scanPathScope
   );
-  console.dir(sorted);
+
+  console.log("::group::organized results");
+  console.log(JSON.stringify(sorted, null, 2));
+  console.log("::endgroup::");
+
   return formatComment({ sorted, tag, skipPackageMessage });
 }
