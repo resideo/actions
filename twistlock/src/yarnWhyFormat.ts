@@ -141,11 +141,12 @@ const sortAndCategorize = (
 
   return categories.map((category) => {
     afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
-      if (
-        category.severity == pkg.severity &&
-        withinPathScope(scanPathScope, pkg)
-      ) {
-        category.packages.push(pkg);
+      if (category.severity === pkg.severity) {
+        if (withinPathScope(scanPathScope, pkg)) {
+          category.packages.push(pkg);
+        } else {
+          categories[categories.length - 1].packages.push(pkg);
+        }
       }
     });
     return category;
@@ -265,7 +266,6 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
       message:
         "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
         severityTable +
-        "<hr>" +
         skipPackageMessage +
         tag,
       graceStatus,
