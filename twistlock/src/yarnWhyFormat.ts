@@ -48,15 +48,15 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
 
           yield spawn(
             command.stdout.forEach((message) => {
-              const messageStringified = message.toString().trim();
-              messages = [...messages, messageStringified];
+              // const messageStringified = message.toString().trim();
+              messages = [...messages, message];
             })
           );
           yield spawn(
             command.stderr.forEach((error) => {
               const errorStringified = error.toString().trim();
               if (errorStringified.match(/^error/i)) {
-                errors = [...errors, errorStringified];
+                errors = [...errors, error];
               }
             })
           );
@@ -191,15 +191,22 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
 
         const yarnWhyDetails = dropdown(
           "Details",
-          convertArrayForMarkdown(yarnWhy)
+          "```\n" + yarnWhy.join("") + "\n```"
         );
 
         const curVersionInstanceDetails = dropdown(
           "Details",
-          versionInstances.join("\n")
+          convertArrayForMarkdown(
+            versionInstances.map((instance) => `${instance}\n`)
+          )
         );
 
-        const allInstanceDetails = dropdown("Details", allInstances.join("\n"));
+        const allInstanceDetails = dropdown(
+          "Details",
+          convertArrayForMarkdown(
+            allInstances.map((instance) => `${instance}\n`)
+          )
+        );
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         let graceCountdown = "🤷 no defined resolution period";
