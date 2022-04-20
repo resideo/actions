@@ -49,14 +49,14 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
           yield spawn(
             command.stdout.forEach((message) => {
               // const messageStringified = message.toString().trim();
-              messages = [...messages, message];
+              messages = [...messages, message.toString()];
             })
           );
           yield spawn(
             command.stderr.forEach((error) => {
               const errorStringified = error.toString().trim();
               if (errorStringified.match(/^error/i)) {
-                errors = [...errors, error];
+                errors = [...errors, error.toString()];
               }
             })
           );
@@ -157,11 +157,11 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
-  const convertArrayForMarkdown = (output) =>
-    output
-      .join("")
-      .replace(/\n/g, "<br>")
-      .replace(/info \r/g, "");
+  // const convertArrayForMarkdown = (output) =>
+  //   output
+  //     .join("")
+  //     .replace(/\n/g, "<br>")
+  //     .replace(/info \r/g, "");
 
   const htmlTable = (rows) => {
     const allRows = rows
@@ -189,24 +189,11 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
           versionInstances,
         } = pkg;
 
-        const yarnWhyDetails = dropdown(
-          "Details",
-          "```\n" + yarnWhy.join("") + "\n```"
-        );
+        const yarnWhyDetails = "\n```\n" + yarnWhy.join("") + "\n```\n";
 
-        const curVersionInstanceDetails = dropdown(
-          "Details",
-          convertArrayForMarkdown(
-            versionInstances.map((instance) => `${instance}\n`)
-          )
-        );
+        const curVersionInstanceDetails = versionInstances.join("\n");
 
-        const allInstanceDetails = dropdown(
-          "Details",
-          convertArrayForMarkdown(
-            allInstances.map((instance) => `${instance}\n`)
-          )
-        );
+        const allInstanceDetails = allInstances.join("\n");
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         let graceCountdown = "🤷 no defined resolution period";
