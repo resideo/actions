@@ -111,7 +111,7 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
 };
 
 const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
-  if (scanPathScope[0] === "") return true;
+  if (scanPathScope.length > 0) return true;
   let within = false;
   const { versionInstances } = pkg;
   console.dir(scanPathScope);
@@ -138,7 +138,7 @@ const sortAndCategorize = (
     { severity: "low", packages: [] },
   ];
 
-  if (scanPathScope[0] !== "")
+  if (scanPathScope.length > 0)
     categories.push({ severity: "image (won't fail workflow)", packages: [] });
 
   return categories.map((category) => {
