@@ -19,16 +19,14 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
     : twistlockjson.vulnerabilities;
 
   const vulns = vulnerabilities.reduce((acc, pkg, index) => {
-    if (!acc[pkg.name]) acc[pkg.name] = [];
-    acc[pkg.name].push({ index, version: pkg.packageVersion });
+    if (!acc[pkg.packageName]) acc[pkg.packageName] = [];
+    acc[pkg.packageName].push({ index, version: pkg.packageVersion });
     return acc;
   }, {});
 
   const packageList = !twistlockjson.packages
     ? twistlockjson.results[0].packages
     : twistlockjson.packages;
-
-  console.dir(vulns);
 
   console.log("::group::results");
   console.dir(vulnerabilities);
@@ -37,8 +35,6 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   let packagesToSkip: Vulnerability[] = [];
   let skipPackageMessage = "";
   let packagesToDisplay: VulnerabilityTagged[] = [];
-
-  console.dir(Object.keys(vulns));
 
   yield all(
     Object.keys(vulns).map(
@@ -110,7 +106,7 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   if (packagesToSkip.length > 0) {
     skipPackageMessage = `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
       .map((pkg) => pkg.packageName)
-      .join(", ")}.<br>`;
+      .join(", ")}.\n`;
     console.warn(skipPackageMessage);
   }
 
