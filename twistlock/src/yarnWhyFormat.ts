@@ -114,8 +114,6 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   if (scanPathScope.length === 0) return true;
   let within = false;
   const { versionInstances } = pkg;
-  console.dir(scanPathScope);
-  console.dir(pkg);
   versionInstances.forEach((instance) => {
     scanPathScope.forEach((scope) => {
       if (instance.startsWith(scope)) {
@@ -176,8 +174,6 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
   let graceStatus = "pass";
   const listOfDependencies = (group) => {
     const { packages } = group;
-    console.log("%%%%%%%%%");
-    console.dir(group);
     return packages
       .map((pkg) => {
         const {
@@ -199,13 +195,10 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
 
         const curVersionInstanceDetails = dropdown(
           "Details",
-          convertArrayForMarkdown(versionInstances)
+          versionInstances.join("\n")
         );
 
-        const allInstanceDetails = dropdown(
-          "Details",
-          convertArrayForMarkdown(allInstances)
-        );
+        const allInstanceDetails = dropdown("Details", allInstances.join("\n"));
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         let graceCountdown = "🤷 no defined resolution period";
