@@ -189,11 +189,11 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
           versionInstances,
         } = pkg;
 
-        const yarnWhyDetails = "\n```\n" + yarnWhy.join("") + "\n```\n";
+        const yarnWhyDetails = "\n\n```\n" + yarnWhy.join("") + "```\n\n";
 
-        const curVersionInstanceDetails = versionInstances.join("\n");
+        const curVersionInstanceDetails = versionInstances.join("<br>");
 
-        const allInstanceDetails = allInstances.join("\n");
+        const allInstanceDetails = allInstances.join("<br>");
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         let graceCountdown = "🤷 no defined resolution period";
