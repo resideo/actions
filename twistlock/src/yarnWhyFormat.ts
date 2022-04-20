@@ -111,7 +111,7 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
 };
 
 const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
-  if (scanPathScope.length > 0) return true;
+  if (scanPathScope.length === 0) return true;
   let within = false;
   const { versionInstances } = pkg;
   console.dir(scanPathScope);
