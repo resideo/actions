@@ -4,6 +4,8 @@ import { Vulnerability } from "./twistlock";
 
 type VulnerabilityTagged = Vulnerability & {
   yarnWhy?: string[];
+  versionInstances: string[];
+  allInstances: string[];
 };
 
 export interface VulnerabilitiesCategorized {
@@ -15,29 +17,28 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   const vulnerabilities = !twistlockjson.vulnerabilities
     ? twistlockjson.results[0].vulnerabilities
     : twistlockjson.vulnerabilities;
-  const duplicatesRemoved = vulnerabilities.reduce((acc, pkg) => {
-    if (
-      !acc.find(
-        (vulnerablePackage) =>
-          vulnerablePackage.packageName == pkg.packageName || !acc.length
-      )
-    ) {
-      return [...acc, pkg];
-    } else {
-      return acc;
-    }
-  }, []);
+
+  const vulns = vulnerabilities.reduce((acc, pkg, index) => {
+    if (!acc[pkg.packageName]) acc[pkg.packageName] = [];
+    acc[pkg.packageName].push({ index, version: pkg.packageVersion });
+    return acc;
+  }, {});
+
+  const packageList = !twistlockjson.packages
+    ? twistlockjson.results[0].packages
+    : twistlockjson.packages;
 
   console.log("::group::results");
-  console.dir(duplicatesRemoved);
+  console.dir(vulnerabilities);
   console.log("::endgroup::");
 
   let packagesToSkip: Vulnerability[] = [];
+  let skipPackageMessage = "";
   let packagesToDisplay: VulnerabilityTagged[] = [];
 
   yield all(
-    duplicatesRemoved.map(
-      ({ packageName: pkg }) =>
+    Object.keys(vulns).map(
+      (pkg) =>
         function* () {
           let messages: string[] = [];
           let errors: string[] = [];
@@ -47,15 +48,15 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
 
           yield spawn(
             command.stdout.forEach((message) => {
-              const messageStringified = message.toString().trim();
-              messages = [...messages, messageStringified];
+              // const messageStringified = message.toString().trim();
+              messages = [...messages, message.toString()];
             })
           );
           yield spawn(
             command.stderr.forEach((error) => {
               const errorStringified = error.toString().trim();
               if (errorStringified.match(/^error/i)) {
-                errors = [...errors, errorStringified];
+                errors = [...errors, error.toString()];
               }
             })
           );
@@ -67,65 +68,100 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
           // but when we run those with yarn why, the command fails.
           // This is to avoid these packages.
           if (errors.length > 0) {
-            const pkgToSkip = duplicatesRemoved.find(
-              ({ packageName: name }) => name == pkg
-            );
-            packagesToSkip = [...packagesToSkip, pkgToSkip];
+            vulns[pkg].forEach((vuln) => {
+              packagesToSkip = [...packagesToSkip, vulnerabilities[vuln.index]];
+            });
           } else {
-            const pkgToDisplay = duplicatesRemoved.find(
-              ({ packageName: name }) => name == pkg
+            const packageInstances = packageList.reduce(
+              (instances, instance) => {
+                if (instance.name === pkg && instance.type === "nodejs") {
+                  instances.push(instance);
+                }
+                return instances;
+              },
+              []
             );
-            pkgToDisplay.yarnWhy = messages;
-            packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
+
+            vulns[pkg].forEach((vuln) => {
+              const pkgToDisplay = vulnerabilities[vuln.index];
+              pkgToDisplay.yarnWhy = messages;
+              pkgToDisplay.allInstances = packageInstances.map(
+                (instance) => `${instance.version} at ${instance.path}`
+              );
+              pkgToDisplay.versionInstances = packageInstances
+                .filter(
+                  (instance) => instance.version === pkgToDisplay.packageVersion
+                )
+                .map((instance) => instance.path);
+              packagesToDisplay = [...packagesToDisplay, pkgToDisplay];
+            });
           }
         }
     )
   );
 
   if (packagesToSkip.length > 0) {
-    console.warn(
-      `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
-        .map((pkg) => pkg.packageName)
-        .join(", ")}`
-    );
+    skipPackageMessage = `The following dependencies are excluded from the github comment because they could not be found within the repository/monorepo: ${packagesToSkip
+      .map((pkg) => pkg.packageName)
+      .join(", ")}.\n`;
+    console.warn(skipPackageMessage);
   }
 
-  return packagesToDisplay;
+  return { packagesToDisplay, packagesToSkip, skipPackageMessage };
 };
 
-const sortAndCategorize = (afterYarnWhy) => {
-  return afterYarnWhy.reduce(
-    (acc, pkg) => {
-      return acc.map((group) => {
-        if (group.severity == pkg.severity) {
-          return {
-            severity: group.severity,
-            packages: [...group.packages, pkg],
-          };
+const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
+  if (scanPathScope.length === 0) return true;
+  let within = false;
+  const { versionInstances } = pkg;
+  versionInstances.forEach((instance) => {
+    scanPathScope.forEach((scope) => {
+      if (instance.startsWith(scope)) {
+        within = true;
+      }
+    });
+  });
+  return within;
+};
+
+const sortAndCategorize = (
+  afterYarnWhy,
+  scanPathScope
+): { severity: string; packages: VulnerabilityTagged[] }[] => {
+  const categories: { severity: string; packages: VulnerabilityTagged[] }[] = [
+    { severity: "critical", packages: [] },
+    { severity: "high", packages: [] },
+    { severity: "moderate", packages: [] },
+    { severity: "medium", packages: [] },
+    { severity: "low", packages: [] },
+  ];
+
+  if (scanPathScope.length > 0)
+    categories.push({ severity: "image (won't fail workflow)", packages: [] });
+
+  return categories.map((category) => {
+    afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
+      if (category.severity === pkg.severity) {
+        if (withinPathScope(scanPathScope, pkg)) {
+          category.packages.push(pkg);
         } else {
-          return group;
+          categories[categories.length - 1].packages.push(pkg);
         }
-      });
-    },
-    [
-      { severity: "critical", packages: [] },
-      { severity: "high", packages: [] },
-      { severity: "moderate", packages: [] },
-      { severity: "medium", packages: [] },
-      { severity: "low", packages: [] },
-    ]
-  );
+      }
+    });
+    return category;
+  });
 };
 
-const formatComment = (sorted, tag) => {
+const formatComment = ({ sorted, tag, skipPackageMessage }) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
-  const convertArrayForMarkdown = (output) =>
-    output
-      .join("")
-      .replace(/\n/g, "<br>")
-      .replace(/info \r/g, "");
+  // const convertArrayForMarkdown = (output) =>
+  //   output
+  //     .join("")
+  //     .replace(/\n/g, "<br>")
+  //     .replace(/info \r/g, "");
 
   const htmlTable = (rows) => {
     const allRows = rows
@@ -136,8 +172,9 @@ const formatComment = (sorted, tag) => {
     return `<table>${allRows}</table>`;
   };
 
-  let workflowStatus = "pass";
-  const listOfDependencies = (packages: VulnerabilityTagged[]) => {
+  let graceStatus = "pass";
+  const listOfDependencies = (group) => {
+    const { packages } = group;
     return packages
       .map((pkg) => {
         const {
@@ -148,12 +185,15 @@ const formatComment = (sorted, tag) => {
           packageVersion,
           status,
           yarnWhy,
+          allInstances,
+          versionInstances,
         } = pkg;
 
-        const yarnWhyDetails = dropdown(
-          "Details",
-          convertArrayForMarkdown(yarnWhy)
-        );
+        const yarnWhyDetails = "\n\n```\n" + yarnWhy.join("") + "```\n\n";
+
+        const curVersionInstanceDetails = versionInstances.join("<br>");
+
+        const allInstanceDetails = allInstances.join("<br>");
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
         let graceCountdown = "🤷 no defined resolution period";
@@ -162,7 +202,7 @@ const formatComment = (sorted, tag) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
-            workflowStatus = "failed";
+            if (!group.severity.startsWith("image")) graceStatus = "failed";
           }
         }
 
@@ -185,53 +225,76 @@ const formatComment = (sorted, tag) => {
           ["<td>Description</td>", `<td>${description}</td>`],
           ["<td>Source</td>", `<td><a href=${link}>Link</a></td>`],
           ["<td>Yarn Why</td>", `<td>${yarnWhyDetails}</td>`],
+          [
+            "<td>Current Version<br>Instance</td>",
+            `<td>${curVersionInstanceDetails}</td>`,
+          ],
+          ["<td>All Instances</td>", `<td>${allInstanceDetails}</td>`],
         ]);
 
         return dropdown(
-          `<code>${packageName}</code><span> ${graceCountdown}</span>`,
+          `<code>${packageName}</code><code>@</code><code>${packageVersion}</code><span> ${graceCountdown}</span>`,
           `\n${summaryTable}${detailsTable}`
         );
       })
       .join("");
   };
 
-  const severityTable = sorted
-    .map((group) => {
-      if (group.packages.length > 0) {
-        return (
-          `<hr>\n${group.severity.toUpperCase()} (${group.packages.length})\n` +
-          `${listOfDependencies(group.packages)}\n`
-        );
-      } else {
-        return "";
-      }
-    })
-    .join("");
+  const severityTable =
+    sorted
+      .map((group) => {
+        if (group.packages.length > 0) {
+          return (
+            `<hr>\n${group.severity.toUpperCase()} (${
+              group.packages.length
+            })\n` + `${listOfDependencies(group)}\n`
+          );
+        } else {
+          return "";
+        }
+      })
+      .join("") + "\n<hr>";
 
   if (severityTable) {
     return {
       message:
         "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
         severityTable +
+        skipPackageMessage +
         tag,
-      workflowStatus,
+      graceStatus,
     };
   } else {
     return {
       message:
         "You are receiving this comment because there are no dependencies with a security vulnerability" +
         tag,
-      workflowStatus,
+      graceStatus,
     };
   }
 };
 
-export function* yarmWhyFormat({ message, tag, repositoryPath }) {
-  const yarnWhyResults: VulnerabilityTagged[] = yield yarnWhyAll(
-    message,
-    repositoryPath
+export function* yarnWhyFormat({
+  message,
+  tag,
+  repositoryPath,
+  scanPathScope,
+}) {
+  const {
+    packagesToDisplay,
+    skipPackageMessage,
+  }: {
+    packagesToDisplay: VulnerabilityTagged[];
+    skipPackageMessage: string;
+  } = yield yarnWhyAll(message, repositoryPath);
+  const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
+    packagesToDisplay,
+    scanPathScope
   );
-  const sorted: VulnerabilitiesCategorized[] =
-    sortAndCategorize(yarnWhyResults);
-  return formatComment(sorted, tag);
+
+  console.log("::group::organized results");
+  console.log(JSON.stringify(sorted, null, 2));
+  console.log("::endgroup::");
+
+  return formatComment({ sorted, tag, skipPackageMessage });
 }

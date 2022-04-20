@@ -3,6 +3,9 @@ import * as github from "@actions/github";
 import { main } from "effection";
 import { run } from "./src";
 
+// note that optional chaining does not appear to work in this file
+// it returns `SyntaxError: Unexpected token '.'`
+
 const token =
   core.getInput("token") === ""
     ? process.env.GITHUB_TOKEN || ""
@@ -20,6 +23,9 @@ main(
       core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
     image: core.getInput("image"),
     githubComment: core.getInput("githubComment") === "true",
+    scanPathScope: core.getInput("scanPathScope")
+      ? core.getInput("scanPathScope").split(",")
+      : [],
     octokit,
   })
 );
