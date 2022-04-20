@@ -110,10 +110,12 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   return { packagesToDisplay, packagesToSkip, skipPackageMessage };
 };
 
-const withinPathScope = (scanPathScope, pkg) => {
+const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   if (scanPathScope[0] === "") return true;
   let within = false;
   const { versionInstances } = pkg;
+  console.dir(scanPathScope);
+  console.dir(pkg);
   versionInstances.forEach((instance) => {
     scanPathScope.forEach((scope) => {
       if (instance.startsWith(scope)) {
@@ -127,8 +129,8 @@ const withinPathScope = (scanPathScope, pkg) => {
 const sortAndCategorize = (
   afterYarnWhy,
   scanPathScope
-): { severity: string; packages: any[] }[] => {
-  const categories: { severity: string; packages: any[] }[] = [
+): { severity: string; packages: VulnerabilityTagged[] }[] => {
+  const categories: { severity: string; packages: VulnerabilityTagged[] }[] = [
     { severity: "critical", packages: [] },
     { severity: "high", packages: [] },
     { severity: "moderate", packages: [] },
@@ -140,7 +142,7 @@ const sortAndCategorize = (
     categories.push({ severity: "image (won't fail workflow)", packages: [] });
 
   return categories.map((category) => {
-    afterYarnWhy.forEach((pkg) => {
+    afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
       if (
         category.severity == pkg.severity &&
         withinPathScope(scanPathScope, pkg)
