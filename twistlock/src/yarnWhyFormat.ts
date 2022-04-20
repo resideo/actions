@@ -28,6 +28,8 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
     ? twistlockjson.results[0].packages
     : twistlockjson.packages;
 
+  console.dir(vulns);
+
   console.log("::group::results");
   console.dir(vulnerabilities);
   console.log("::endgroup::");
@@ -35,6 +37,8 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   let packagesToSkip: Vulnerability[] = [];
   let skipPackageMessage = "";
   let packagesToDisplay: VulnerabilityTagged[] = [];
+
+  console.dir(Object.keys(vulns));
 
   yield all(
     Object.keys(vulns).map(
