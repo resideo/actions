@@ -68,9 +68,6 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
           // but when we run those with yarn why, the command fails.
           // This is to avoid these packages.
           if (errors.length > 0) {
-            console.log(`::group::${pkg} errors`);
-            console.error(errors);
-            console.log("::endgroup::");
             vulns[pkg].forEach((vuln) => {
               packagesToSkip = [...packagesToSkip, vulnerabilities[vuln.index]];
             });
@@ -177,6 +174,8 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
   let graceStatus = "pass";
   const listOfDependencies = (group) => {
     const { packages } = group;
+    console.log("%%%%%%%%%");
+    console.dir(group);
     return packages
       .map((pkg) => {
         const {
@@ -303,5 +302,6 @@ export function* yarnWhyFormat({
     packagesToDisplay,
     scanPathScope
   );
+  console.dir(sorted);
   return formatComment({ sorted, tag, skipPackageMessage });
 }
