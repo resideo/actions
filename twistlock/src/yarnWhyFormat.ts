@@ -18,6 +18,19 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
     ? twistlockjson.results[0].vulnerabilities
     : twistlockjson.vulnerabilities;
 
+  console.log("::group::results");
+  console.dir(vulnerabilities);
+  console.log("::endgroup::");
+
+  if (!vulnerabilities)
+    throw new Error(
+      `The vulnerabilities object is not populated. The following is the response.\n\n${JSON.stringify(
+        twistlockjson,
+        null,
+        2
+      )}`
+    );
+
   const vulns = vulnerabilities.reduce((acc, pkg, index) => {
     if (!acc[pkg.packageName]) acc[pkg.packageName] = [];
     acc[pkg.packageName].push({ index, version: pkg.packageVersion });
@@ -27,10 +40,6 @@ const yarnWhyAll = function* (twistlockjson, repositoryPath) {
   const packageList = !twistlockjson.packages
     ? twistlockjson.results[0].packages
     : twistlockjson.packages;
-
-  console.log("::group::results");
-  console.dir(vulnerabilities);
-  console.log("::endgroup::");
 
   let packagesToSkip: Vulnerability[] = [];
   let skipPackageMessage = "";
