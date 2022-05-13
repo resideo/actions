@@ -247,23 +247,14 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
       })
       .join("") + "\n<hr>";
 
-  if (severityTable) {
-    return {
-      message:
-        "Below are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
-        severityTable +
-        skipPackageMessage +
-        tag,
-      graceStatus,
-    };
-  } else {
-    return {
-      message:
-        "You are receiving this comment because there are no dependencies with a security vulnerability" +
-        tag,
-      graceStatus,
-    };
-  }
+  return {
+    message:
+      "## Vulnerabilities\n\nBelow are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
+      severityTable +
+      skipPackageMessage +
+      tag,
+    graceStatus,
+  };
 };
 
 export function* yarnWhyFormat({

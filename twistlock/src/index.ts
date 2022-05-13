@@ -45,6 +45,8 @@ export function* run({
     ? results.results[0].compliances
     : results.compliances;
 
+  let finalMessage = "";
+
   if (vulnerabilities) {
     const { message, graceStatus } = yield yarnWhyFormat({
       vulnerabilities,
@@ -57,7 +59,8 @@ export function* run({
     console.log("::group::comment");
     console.dir(message);
     console.log("::endgroup::");
-    if (githubComment) yield postGithubComment(octokit, { message, tag });
+
+    finalMessage += message + "\n\n";
     if (graceStatus !== "pass")
       core.setFailed(
         "One or more packages have an overdue security resolution."
@@ -68,8 +71,21 @@ export function* run({
     console.log("::group::compliances");
     console.dir(compliances);
     console.log("::endgroup::");
+
+    const message = `## Compliance Issues\n\n\`\`\`${JSON.stringify(
+      compliances,
+      null,
+      2
+    )}\`\`\``;
+    finalMessage += message + "\n\n";
     core.setFailed("One or more compliance issues have been flagged.");
   }
+
+  if (finalMessage === "")
+    finalMessage =
+      "There are no security vulnerabilities or compliance issues.\n\n";
+  if (githubComment)
+    yield postGithubComment(octokit, { message: finalMessage + tag, tag });
 
   if (code !== 0)
     core.warning(
