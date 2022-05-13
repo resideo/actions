@@ -13,33 +13,16 @@ export interface VulnerabilitiesCategorized {
   packages: VulnerabilityTagged[];
 }
 
-const yarnWhyAll = function* (twistlockjson, repositoryPath) {
-  const vulnerabilities = !twistlockjson.vulnerabilities
-    ? twistlockjson.results[0].vulnerabilities
-    : twistlockjson.vulnerabilities;
-
+const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
   console.log("::group::results");
   console.dir(vulnerabilities);
   console.log("::endgroup::");
-
-  if (!vulnerabilities)
-    throw new Error(
-      `The vulnerabilities object is not populated. The following is the response.\n\n${JSON.stringify(
-        twistlockjson,
-        null,
-        2
-      )}`
-    );
 
   const vulns = vulnerabilities.reduce((acc, pkg, index) => {
     if (!acc[pkg.packageName]) acc[pkg.packageName] = [];
     acc[pkg.packageName].push({ index, version: pkg.packageVersion });
     return acc;
   }, {});
-
-  const packageList = !twistlockjson.packages
-    ? twistlockjson.results[0].packages
-    : twistlockjson.packages;
 
   let packagesToSkip: Vulnerability[] = [];
   let skipPackageMessage = "";
@@ -284,7 +267,8 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
 };
 
 export function* yarnWhyFormat({
-  message,
+  vulnerabilities,
+  packageList,
   tag,
   repositoryPath,
   scanPathScope,
@@ -295,7 +279,7 @@ export function* yarnWhyFormat({
   }: {
     packagesToDisplay: VulnerabilityTagged[];
     skipPackageMessage: string;
-  } = yield yarnWhyAll(message, repositoryPath);
+  } = yield yarnWhyAll(vulnerabilities, packageList, repositoryPath);
   const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
     packagesToDisplay,
     scanPathScope

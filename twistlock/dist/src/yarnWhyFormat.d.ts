@@ -8,8 +8,9 @@ export interface VulnerabilitiesCategorized {
     severity: string;
     packages: VulnerabilityTagged[];
 }
-export declare function yarnWhyFormat({ message, tag, repositoryPath, scanPathScope, }: {
-    message: any;
+export declare function yarnWhyFormat({ vulnerabilities, packageList, tag, repositoryPath, scanPathScope, }: {
+    vulnerabilities: any;
+    packageList: any;
     tag: any;
     repositoryPath: any;
     scanPathScope: any;

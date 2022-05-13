@@ -36,23 +36,30 @@ export interface TwistlockRun {
     scanPathScope: string[];
     octokit: InstanceType<typeof GitHub>;
 }
-export interface TwistlockResults {
+export interface TwistlockCLI {
     code: number;
-    results: {
-        repository: string;
-        passed: boolean;
-        packages: {
-            type: string;
-            name: string;
-            version: string;
-            path: string;
-            license: string[];
-        }[];
-        complianceIssues: unknown;
-        complianceDistribution: Distribution;
-        vulnerabilities: Vulnerability[];
-        vulnerabilityDistribution: Distribution;
-    };
+    results: TwistlockResults | TwistlockResults[];
+}
+export interface TwistlockResults {
+    repository: string;
+    passed: boolean;
+    packages: {
+        type: string;
+        name: string;
+        version: string;
+        path: string;
+        license: string[];
+    }[];
+    compliances: {
+        id: number;
+        title: string;
+        severity: string;
+        cause: string;
+        category: string;
+    }[];
+    complianceDistribution: Distribution;
+    vulnerabilities: Vulnerability[];
+    vulnerabilityDistribution: Distribution;
 }
 interface DownloadCliParams {
     user?: string;
@@ -66,7 +73,7 @@ interface ScanRepositoryParams {
     image: string;
 }
 export declare type SetupCliReturn = {
-    scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockResults, any>;
+    scanRepository: (params: ScanRepositoryParams) => Generator<any, TwistlockCLI, any>;
 };
 export declare function setupCli({ user, password, token, consoleUrl, project, }: DownloadCliParams): Generator<any, SetupCliReturn, any>;
 export {};

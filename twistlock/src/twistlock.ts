@@ -51,23 +51,31 @@ export interface TwistlockRun {
   octokit: InstanceType<typeof GitHub>;
 }
 
-export interface TwistlockResults {
+export interface TwistlockCLI {
   code: number;
-  results: {
-    repository: string;
-    passed: boolean;
-    packages: {
-      type: string;
-      name: string;
-      version: string;
-      path: string;
-      license: string[];
-    }[];
-    complianceIssues: unknown;
-    complianceDistribution: Distribution;
-    vulnerabilities: Vulnerability[];
-    vulnerabilityDistribution: Distribution;
-  };
+  results: TwistlockResults | TwistlockResults[];
+}
+
+export interface TwistlockResults {
+  repository: string;
+  passed: boolean;
+  packages: {
+    type: string;
+    name: string;
+    version: string;
+    path: string;
+    license: string[];
+  }[];
+  compliances: {
+    id: number;
+    title: string;
+    severity: string;
+    cause: string;
+    category: string;
+  }[];
+  complianceDistribution: Distribution;
+  vulnerabilities: Vulnerability[];
+  vulnerabilityDistribution: Distribution;
 }
 
 interface DownloadCliParams {
@@ -86,7 +94,7 @@ interface ScanRepositoryParams {
 export type SetupCliReturn = {
   scanRepository: (
     params: ScanRepositoryParams
-  ) => Generator<any, TwistlockResults, any>;
+  ) => Generator<any, TwistlockCLI, any>;
 };
 
 async function fileExists(filePath: string) {
@@ -129,7 +137,7 @@ export function* setupCli({
     scanRepository: function* scanRepository({
       repositoryPath,
       image,
-    }: ScanRepositoryParams): Generator<any, TwistlockResults, any> {
+    }: ScanRepositoryParams): Generator<any, TwistlockCLI, any> {
       const output: FileResult = yield file();
 
       console.log("::group::scan");
@@ -172,11 +180,13 @@ export function* setupCli({
       console.dir(result);
       console.log("::endgroup::");
 
-      let results;
-
       try {
         console.log("::group::upload artifact");
-        results = yield fs.readFile(`${output.path}`, { encoding: "utf-8" });
+        const resultFile = yield fs.readFile(`${output.path}`, {
+          encoding: "utf-8",
+        });
+        const results: TwistlockResults | TwistlockResults[] =
+          JSON.parse(resultFile);
 
         const artifactClient = artifactCreate();
         const artifactName = "twistcli-output.txt";
@@ -195,7 +205,7 @@ export function* setupCli({
         console.dir(uploadResult);
         console.log("::endgroup::");
 
-        return { results: JSON.parse(results), code: result.code };
+        return { results, code: result.code };
       } catch (error: any) {
         throw new Error(error);
       }

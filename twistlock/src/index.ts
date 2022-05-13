@@ -1,5 +1,5 @@
 import { setupCli } from "./twistlock";
-import { SetupCliReturn, TwistlockResults, TwistlockRun } from "./twistlock";
+import type { TwistlockRun } from "./twistlock";
 import { yarnWhyFormat } from "./yarnWhyFormat";
 import { postGithubComment } from "./githubComment";
 import * as core from "@actions/core";
@@ -19,7 +19,7 @@ export function* run({
   scanPathScope,
   octokit,
 }: TwistlockRun) {
-  const twistcli: SetupCliReturn = yield setupCli({
+  const twistcli = yield setupCli({
     user,
     password,
     token,
@@ -28,25 +28,49 @@ export function* run({
   });
 
   console.log(`running in ${repositoryPath}`);
-  const { results, code }: { results: TwistlockResults; code: number } =
-    yield twistcli.scanRepository({
-      repositoryPath,
-      image,
-    });
-
-  const { message, graceStatus } = yield yarnWhyFormat({
-    message: results,
-    tag,
+  const { results, code } = yield twistcli.scanRepository({
     repositoryPath,
-    scanPathScope,
+    image,
   });
 
-  console.log("::group::comment");
-  console.dir(message);
-  console.log("::endgroup::");
-  if (githubComment) yield postGithubComment(octokit, { message, tag });
-  if (graceStatus !== "pass")
-    core.setFailed("One or more packages have an overdue security resolution.");
+  const vulnerabilities = !results.vulnerabilities
+    ? results.results[0].vulnerabilities
+    : results.vulnerabilities;
+
+  const packageList = !results.packages
+    ? results.results[0].packages
+    : results.packages;
+
+  const compliances = !results.compliances
+    ? results.results[0].compliances
+    : results.compliances;
+
+  if (vulnerabilities) {
+    const { message, graceStatus } = yield yarnWhyFormat({
+      vulnerabilities,
+      packageList,
+      tag,
+      repositoryPath,
+      scanPathScope,
+    });
+
+    console.log("::group::comment");
+    console.dir(message);
+    console.log("::endgroup::");
+    if (githubComment) yield postGithubComment(octokit, { message, tag });
+    if (graceStatus !== "pass")
+      core.setFailed(
+        "One or more packages have an overdue security resolution."
+      );
+  }
+
+  if (compliances) {
+    console.log("::group::compliances");
+    console.dir(compliances);
+    console.log("::endgroup::");
+    core.setFailed("One or more compliance issues have been flagged.");
+  }
+
   if (code !== 0)
     core.warning(
       `CLI exited with code ${code}. This implies there may be compliance issues.`
