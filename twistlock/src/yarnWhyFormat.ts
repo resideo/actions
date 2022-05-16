@@ -145,7 +145,7 @@ const sortAndCategorize = (
   });
 };
 
-const formatComment = ({ sorted, tag, skipPackageMessage }) => {
+const formatComment = ({ sorted, skipPackageMessage }) => {
   const dropdown = (title, content) =>
     `<details><summary>${title}</summary>${content}</details>`;
 
@@ -251,8 +251,7 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
     message:
       "## Vulnerabilities\n\nBelow are the list of dependencies with security vulnerabilities grouped by severity levels. Click to expand.\n\n" +
       severityTable +
-      skipPackageMessage +
-      tag,
+      skipPackageMessage,
     graceStatus,
   };
 };
@@ -260,7 +259,6 @@ const formatComment = ({ sorted, tag, skipPackageMessage }) => {
 export function* yarnWhyFormat({
   vulnerabilities,
   packageList,
-  tag,
   repositoryPath,
   scanPathScope,
 }) {
@@ -280,5 +278,5 @@ export function* yarnWhyFormat({
   console.log(JSON.stringify(sorted, null, 2));
   console.log("::endgroup::");
 
-  return formatComment({ sorted, tag, skipPackageMessage });
+  return formatComment({ sorted, skipPackageMessage });
 }

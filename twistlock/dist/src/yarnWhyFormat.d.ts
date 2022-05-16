@@ -8,10 +8,9 @@ export interface VulnerabilitiesCategorized {
     severity: string;
     packages: VulnerabilityTagged[];
 }
-export declare function yarnWhyFormat({ vulnerabilities, packageList, tag, repositoryPath, scanPathScope, }: {
+export declare function yarnWhyFormat({ vulnerabilities, packageList, repositoryPath, scanPathScope, }: {
     vulnerabilities: any;
     packageList: any;
-    tag: any;
     repositoryPath: any;
     scanPathScope: any;
 }): Generator<Generator<import("effection").Operation<void[]>, {

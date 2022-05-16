@@ -51,7 +51,6 @@ export function* run({
     const { message, graceStatus } = yield yarnWhyFormat({
       vulnerabilities,
       packageList,
-      tag,
       repositoryPath,
       scanPathScope,
     });
@@ -72,11 +71,11 @@ export function* run({
     console.dir(compliances);
     console.log("::endgroup::");
 
-    const message = `## Compliance Issues\n\n\`\`\`${JSON.stringify(
+    const message = `## Compliance Issues\n\n\`\`\`\n${JSON.stringify(
       compliances,
       null,
       2
-    )}\`\`\``;
+    )}\n\`\`\``;
     finalMessage += message + "\n\n";
     core.setFailed("One or more compliance issues have been flagged.");
   }
