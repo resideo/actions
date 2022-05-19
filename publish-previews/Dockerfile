@@ -1,4 +1,4 @@
-FROM node:12.18.4-alpine
+FROM node:14.19.3-alpine
 
 RUN apk add --no-cache git bash git-subtree jq python make g++
 
