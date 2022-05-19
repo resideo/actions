@@ -1,4 +1,4 @@
-FROM node:12.18.4-alpine
+FROM ceresacr.azurecr.io/nodejs14:14.19.1
 
 RUN apk add --no-cache git bash git-subtree tree jq
 
