@@ -34,6 +34,8 @@ export function* run({
   });
 
   console.dir(results);
+  console.log("---------------");
+  console.dir(results[0]);
 
   const vulnerabilities = !results.vulnerabilities
     ? results[0].vulnerabilities
