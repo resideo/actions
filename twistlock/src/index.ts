@@ -33,7 +33,7 @@ export function* run({
     image,
   });
 
-  console.dir(results);
+  console.log(`results: ${results}`);
 
   const vulnerabilities = !results.vulnerabilities
     ? results?.results[0].vulnerabilities
