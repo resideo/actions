@@ -37,13 +37,13 @@ export function* run({
     ? results?.results[0].vulnerabilities
     : results?.vulnerabilities;
 
-  const packageList = !results.packages
-    ? results.results[0].packages
-    : results.packages;
+  const packageList = !results?.packages
+    ? results?.results[0].packages
+    : results?.packages;
 
-  const compliances = !results.compliances
-    ? results.results[0].compliances
-    : results.compliances;
+  const compliances = !results?.compliances
+    ? results?.results[0].compliances
+    : results?.compliances;
 
   let finalMessage = "";
 
