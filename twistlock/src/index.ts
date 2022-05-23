@@ -36,15 +36,15 @@ export function* run({
   console.dir(results);
 
   const vulnerabilities = !results.vulnerabilities
-    ? results.results[0].vulnerabilities
+    ? results[0].vulnerabilities
     : results.vulnerabilities;
 
   const packageList = !results.packages
-    ? results.results[0].packages
+    ? results[0].packages
     : results.packages;
 
   const compliances = !results.compliances
-    ? results.results[0].compliances
+    ? results[0].compliances
     : results.compliances;
 
   let finalMessage = "";
