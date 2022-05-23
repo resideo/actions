@@ -34,8 +34,8 @@ export function* run({
   });
 
   const vulnerabilities = !results.vulnerabilities
-    ? results.results[0].vulnerabilities
-    : results.vulnerabilities;
+    ? results?.results[0].vulnerabilities
+    : results?.vulnerabilities;
 
   const packageList = !results.packages
     ? results.results[0].packages
