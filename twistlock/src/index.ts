@@ -27,7 +27,7 @@ export function* run({
     project,
   });
 
-  console.log(`running in ${repositoryPath}`);
+  console.log(`??running in ${repositoryPath}`);
   const { results, code } = yield twistcli.scanRepository({
     repositoryPath,
     image,
