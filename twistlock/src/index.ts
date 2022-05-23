@@ -38,15 +38,13 @@ export function* run({
   console.dir(results.vulnerabilities);
 
   const vulnerabilities = !results.vulnerabilities
-    ? results[0].vulnerabilities
+    ? "No vulnerabilities"
     : results.vulnerabilities;
 
-  const packageList = !results.packages
-    ? results[0].packages
-    : results.packages;
+  const packageList = !results.packages ? "No packages" : results.packages;
 
   const compliances = !results.compliances
-    ? results[0].compliances
+    ? "No compliances"
     : results.compliances;
 
   let finalMessage = "";
