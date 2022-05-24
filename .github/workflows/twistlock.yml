@@ -8,11 +8,11 @@ on:
 jobs:
   twistlock:
     name: Run Twistlock
-    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: ./twistlock
+        continue-on-error: true
         with:
           project: Titan-QA
           consoleURL: https://twistlock.cloud.resideo.com
