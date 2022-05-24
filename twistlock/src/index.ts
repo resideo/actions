@@ -34,16 +34,12 @@ export function* run({
   });
 
   const vulnerabilities = !results.vulnerabilities
-    ? results.results[0].vulnerabilities
+    ? null
     : results.vulnerabilities;
 
-  const packageList = !results.packages
-    ? results.results[0].packages
-    : results.packages;
+  const packageList = !results.packages ? null : results.packages;
 
-  const compliances = !results.compliances
-    ? results.results[0].compliances
-    : results.compliances;
+  const compliances = !results.compliances ? null : results.compliances;
 
   let finalMessage = "";
 
