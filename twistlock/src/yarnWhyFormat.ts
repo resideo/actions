@@ -110,7 +110,7 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
     scanPathScope.forEach((scope) => {
       console.log("instance", instance);
       console.log("scope", scope);
-      if (instance.startsWith(scope)) {
+      if (instance.startsWith(scope) && scope !== "/usr/local/lib/") {
         within = true;
       }
     });
