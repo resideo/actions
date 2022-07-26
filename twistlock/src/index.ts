@@ -45,13 +45,6 @@ export function* run({
     packageList = !res[0].packages ? null : res[0].packages;
 
     compliances = !res[0].compliances ? null : res[0].compliances;
-
-    console.log("vulnerabilities");
-    console.dir(vulnerabilities);
-    console.log("package list");
-    console.dir(packageList);
-    console.log("compliances");
-    console.dir(compliances);
   } else {
     vulnerabilities = !results.vulnerabilities ? null : results.vulnerabilities;
 
