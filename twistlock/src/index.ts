@@ -33,6 +33,12 @@ export function* run({
     image,
   });
 
+  if (image) {
+    console.log(`image: ${image}`);
+    console.log("results");
+    console.dir(results);
+  }
+
   console.log("results object");
   console.dir(results);
   console.log("---------------");
