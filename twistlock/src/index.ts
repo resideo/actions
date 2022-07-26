@@ -33,12 +33,14 @@ export function* run({
     image,
   });
 
+  console.log("results object");
   console.dir(results);
-  // console.log("---------------");
-  // console.dir(results.vulnerabilities);
+  console.log("---------------");
+  console.log("vulnerabilities array");
+  console.dir(results.vulnerabilities);
 
   const vulnerabilities = !results.vulnerabilities
-    ? "No vulnerabilities found"
+    ? null
     : results.vulnerabilities;
 
   const packageList = !results.packages ? null : results.packages;
