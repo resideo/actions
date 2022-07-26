@@ -33,32 +33,32 @@ export function* run({
     image,
   });
 
+  let vulnerabilities;
+  let packageList;
+  let compliances;
+
   if (image) {
-    // console.log(`image: ${image}`);
-    // console.log("results log", results);
-    // console.log("results dir");
-    // console.dir(results);
-    // console.log("typeof results", typeof results);
     const res = results["results"];
-    console.log("results arr???", res[0]);
-    console.log("results vulnerabilities??", res[0].vulnerabilities);
-    // console.log("results' vulnerabilities");
-    // console.dir(results[0].vulnerabilities);
+
+    vulnerabilities = !res[0].vulnerabilities ? null : res[0].vulnerabilities;
+
+    packageList = !res[0].packages ? null : res[0].packages;
+
+    compliances = !res[0].compliances ? null : res[0].compliances;
+
+    console.log("vulnerabilities");
+    console.dir(vulnerabilities);
+    console.log("package list");
+    console.dir(packageList);
+    console.log("compliances");
+    console.dir(compliances);
+  } else {
+    vulnerabilities = !results.vulnerabilities ? null : results.vulnerabilities;
+
+    packageList = !results.packages ? null : results.packages;
+
+    compliances = !results.compliances ? null : results.compliances;
   }
-
-  console.log("results object");
-  console.dir(results);
-  console.log("---------------");
-  console.log("vulnerabilities array");
-  console.dir(results.vulnerabilities);
-
-  const vulnerabilities = !results.vulnerabilities
-    ? null
-    : results.vulnerabilities;
-
-  const packageList = !results.packages ? null : results.packages;
-
-  const compliances = !results.compliances ? null : results.compliances;
 
   let finalMessage = "";
 
