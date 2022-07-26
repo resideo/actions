@@ -35,10 +35,13 @@ export function* run({
 
   if (image) {
     // console.log(`image: ${image}`);
-    console.log("results");
+    console.log("results lg=ig", results);
+    console.log("results dir");
+    console.dir(results);
     console.log("typeof results", typeof results);
-    console.log("results' vulnerabilities");
-    console.dir(results[0].vulnerabilities);
+    console.log("results arr??", results["results"]);
+    // console.log("results' vulnerabilities");
+    // console.dir(results[0].vulnerabilities);
   }
 
   console.log("results object");
