@@ -34,9 +34,9 @@ export function* run({
   });
 
   if (image) {
-    console.log(`image: ${image}`);
+    // console.log(`image: ${image}`);
     console.log("results");
-    console.dir(results);
+    console.log("typeof results", typeof results);
     console.log("results' vulnerabilities");
     console.dir(results[0].vulnerabilities);
   }
