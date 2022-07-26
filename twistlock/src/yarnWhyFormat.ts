@@ -108,6 +108,8 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   const { versionInstances } = pkg;
   versionInstances.forEach((instance) => {
     scanPathScope.forEach((scope) => {
+      console.log("instance", instance);
+      console.log("scope", scope);
       if (instance.startsWith(scope)) {
         within = true;
       }
