@@ -37,6 +37,8 @@ export function* run({
     console.log(`image: ${image}`);
     console.log("results");
     console.dir(results);
+    console.log("results' vulnerabilities");
+    console.dir(results[0].vulnerabilities);
   }
 
   console.log("results object");
