@@ -76,6 +76,8 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
 
             vulns[pkg].forEach((vuln) => {
               const pkgToDisplay = vulnerabilities[vuln.index];
+              console.log("pkgToDisplay allInstances");
+              console.dir(pkgToDisplay.allInstances);
               pkgToDisplay.yarnWhy = messages;
               pkgToDisplay.allInstances = packageInstances.map(
                 (instance) => `${instance.version} at ${instance.path}`
@@ -138,8 +140,8 @@ const sortAndCategorize = (
 
   return categories.map((category) => {
     afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
-      console.log("pkg");
-      console.dir(pkg);
+      // console.log("pkg");
+      // console.dir(pkg);
       if (category.severity === pkg.severity) {
         if (withinPathScope(scanPathScope, pkg)) {
           category.packages.push(pkg);
