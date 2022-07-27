@@ -79,15 +79,9 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
 
               pkgToDisplay.yarnWhy = messages;
               pkgToDisplay.allInstances = packageInstances.map((instance) => {
-                const path = instance.path;
-                let strReturn;
-                if (path.startsWith("/home/node/")) {
-                  strReturn = `${instance.version} at ${instance.path}`;
-                }
-                return strReturn;
+                return `${instance.version} at ${instance.path}`;
               });
-              console.log("pkgToDisplay");
-              console.dir(pkgToDisplay);
+
               pkgToDisplay.versionInstances = packageInstances
                 .filter(
                   (instance) => instance.version === pkgToDisplay.packageVersion
@@ -115,16 +109,13 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   let within = false;
   const { versionInstances } = pkg;
   versionInstances.forEach((instance) => {
-    if (instance.startsWith("/home/node/")) {
-      scanPathScope.forEach((scope) => {
-        // console.log("instance", instance);
-        // console.log("scope", scope);
-        // console.log("starts with...", instance.startsWith("/home/node/"));
-        if (instance.startsWith(scope)) {
-          within = true;
-        }
-      });
-    }
+    // if (instance.startsWith("/home/node/")) {
+    scanPathScope.forEach((scope) => {
+      if (instance.startsWith(scope)) {
+        within = true;
+      }
+    });
+    // }
   });
   return within;
 };
@@ -146,8 +137,6 @@ const sortAndCategorize = (
 
   return categories.map((category) => {
     afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
-      console.log("pkg");
-      console.dir(pkg);
       if (category.severity === pkg.severity) {
         if (withinPathScope(scanPathScope, pkg)) {
           category.packages.push(pkg);
@@ -156,8 +145,6 @@ const sortAndCategorize = (
         }
       }
     });
-    // console.log("category");
-    // console.dir(category);
     return category;
   });
 };
