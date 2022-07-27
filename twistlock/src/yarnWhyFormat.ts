@@ -109,9 +109,9 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   versionInstances.forEach((instance) => {
     if (instance.startsWith("/home/node/")) {
       scanPathScope.forEach((scope) => {
-        console.log("instance", instance);
-        console.log("scope", scope);
-        console.log("starts with...", instance.startsWith("/home/node/"));
+        // console.log("instance", instance);
+        // console.log("scope", scope);
+        // console.log("starts with...", instance.startsWith("/home/node/"));
         if (instance.startsWith(scope)) {
           within = true;
         }
@@ -138,6 +138,8 @@ const sortAndCategorize = (
 
   return categories.map((category) => {
     afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
+      console.log("pkg");
+      console.dir(pkg);
       if (category.severity === pkg.severity) {
         if (withinPathScope(scanPathScope, pkg)) {
           category.packages.push(pkg);
@@ -146,6 +148,8 @@ const sortAndCategorize = (
         }
       }
     });
+    console.log("category");
+    console.dir(category);
     return category;
   });
 };
