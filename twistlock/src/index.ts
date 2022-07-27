@@ -68,10 +68,14 @@ export function* run({
     console.log("::endgroup::");
 
     finalMessage += message + "\n\n";
-    if (graceStatus !== "pass")
+    // trying to see if we even hit this in the mono
+    if (graceStatus !== "pass") {
+      console.log("::group::warning");
+      console.log(`${graceStatus}`);
       core.setFailed(
         "One or more packages have an overdue security resolution."
       );
+    }
   }
 
   if (compliances) {
