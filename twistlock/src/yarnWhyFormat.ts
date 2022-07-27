@@ -76,12 +76,18 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
 
             vulns[pkg].forEach((vuln) => {
               const pkgToDisplay = vulnerabilities[vuln.index];
-              console.log("pkgToDisplay allInstances");
-              console.dir(pkgToDisplay.allInstances);
+
               pkgToDisplay.yarnWhy = messages;
-              pkgToDisplay.allInstances = packageInstances.map(
-                (instance) => `${instance.version} at ${instance.path}`
-              );
+              pkgToDisplay.allInstances = packageInstances.map((instance) => {
+                const path = instance.path;
+                let strReturn;
+                if (path.startsWith("/home/node/")) {
+                  strReturn = `${instance.version} at ${instance.path}`;
+                }
+                return strReturn;
+              });
+              console.log("pkgToDisplay");
+              console.dir(pkgToDisplay);
               pkgToDisplay.versionInstances = packageInstances
                 .filter(
                   (instance) => instance.version === pkgToDisplay.packageVersion
@@ -140,8 +146,8 @@ const sortAndCategorize = (
 
   return categories.map((category) => {
     afterYarnWhy.forEach((pkg: VulnerabilityTagged) => {
-      // console.log("pkg");
-      // console.dir(pkg);
+      console.log("pkg");
+      console.dir(pkg);
       if (category.severity === pkg.severity) {
         if (withinPathScope(scanPathScope, pkg)) {
           category.packages.push(pkg);
@@ -150,8 +156,8 @@ const sortAndCategorize = (
         }
       }
     });
-    console.log("category");
-    console.dir(category);
+    // console.log("category");
+    // console.dir(category);
     return category;
   });
 };
