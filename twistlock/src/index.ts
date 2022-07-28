@@ -63,8 +63,6 @@ export function* run({
       scanPathScope,
     });
 
-    console.log("message");
-    console.dir(message);
     console.log("graceStatus");
     console.dir(graceStatus);
 
@@ -74,10 +72,7 @@ export function* run({
 
     finalMessage += message + "\n\n";
 
-    console.log("final comment");
-    console.dir(finalMessage);
-
-    // trying to see if we even hit this in the mono
+    // we never hit this even though i think we should be hitting it??
     if (graceStatus !== "pass") {
       console.log("graceStatus");
       console.log(`${graceStatus}`);
