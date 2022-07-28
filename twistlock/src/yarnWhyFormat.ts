@@ -189,8 +189,8 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
 
         const curVersionInstanceDetails = versionInstances.join("<br>");
 
-        console.log("current instance");
-        console.dir(curVersionInstanceDetails);
+        // console.log("current instance");
+        // console.dir(curVersionInstanceDetails);
 
         const allInstanceDetails = allInstances.join("<br>");
 
@@ -201,6 +201,8 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
+            console.log("current instance???");
+            console.log(curVersionInstanceDetails.startsWith("/home/node/"));
             if (curVersionInstanceDetails.startsWith("/home/node/")) {
               graceStatus = "failed";
               console.log("grace status");
