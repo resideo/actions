@@ -201,8 +201,11 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
-            if (!curVersionInstanceDetails.startsWith("/usr/local/lib/"))
+            if (curVersionInstanceDetails.startsWith("/home/node/")) {
               graceStatus = "failed";
+              console.log("grace status");
+              console.dir(graceStatus);
+            }
           }
         }
 
