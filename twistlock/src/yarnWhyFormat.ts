@@ -201,7 +201,8 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
-            if (!group.severity.startsWith("image")) graceStatus = "failed";
+            if (!curVersionInstanceDetails.startsWith("/usr/local/lib/"))
+              graceStatus = "failed";
           }
         }
 
