@@ -87,6 +87,6 @@ export function* run({
 
   if (code !== 0)
     core.warning(
-      `CLI exited with code ${code}. This implies there may be compliance issues.`
+      `CLI done goofed with code ${code}. This implies there may be compliance issues.`
     );
 }
