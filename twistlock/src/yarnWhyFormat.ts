@@ -169,6 +169,12 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
   let graceStatus = "pass";
   const listOfDependencies = (group) => {
     const { packages } = group;
+    const vulnsList: string[] = [];
+    console.log("::group::vulns with overdue grace period");
+    vulnsList.map((vuln) => {
+      console.dir(vuln);
+    });
+    console.log("::endgroup::");
     return packages
       .map((pkg) => {
         const {
@@ -196,10 +202,11 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
+            vulnsList.push(curVersionInstanceDetails);
 
-            console.log("::group::current instance with overdue grace period");
-            console.dir(curVersionInstanceDetails);
-            console.log("::endgroup::");
+            // console.log("::group::vulns with overdue grace period");
+            // console.dir(curVersionInstanceDetails);
+            // console.log("::endgroup::");
 
             if (curVersionInstanceDetails.startsWith("/home/node/")) {
               graceStatus = "failed";
@@ -239,6 +246,10 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
         );
       })
       .join("");
+
+    // console.log("vulnsListMessage:", vulnsListMessage);
+
+    // return [...packagesList];
   };
 
   const severityTable =
