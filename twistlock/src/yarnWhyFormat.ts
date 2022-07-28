@@ -170,12 +170,13 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
   const listOfDependencies = (group) => {
     const { packages } = group;
     const vulnsList: string[] = [];
+    console.log("vulnsList???", vulnsList);
     console.log("::group::vulns with overdue grace period");
     vulnsList.map((vuln) => {
       console.dir(vuln);
     });
     console.log("::endgroup::");
-    return packages
+    const packagesList = packages
       .map((pkg) => {
         const {
           cvss,
@@ -247,9 +248,7 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
       })
       .join("");
 
-    // console.log("vulnsListMessage:", vulnsListMessage);
-
-    // return [...packagesList];
+    return [...packagesList];
   };
 
   const severityTable =
