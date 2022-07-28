@@ -185,12 +185,12 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
           versionInstances,
         } = pkg;
 
-        console.log("group");
-        console.dir(group);
-
         const yarnWhyDetails = "\n\n```\n" + yarnWhy.join("") + "```\n\n";
 
         const curVersionInstanceDetails = versionInstances.join("<br>");
+
+        console.log("current instance");
+        console.dir(curVersionInstanceDetails);
 
         const allInstanceDetails = allInstances.join("<br>");
 
