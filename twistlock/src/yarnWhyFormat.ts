@@ -109,13 +109,11 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   let within = false;
   const { versionInstances } = pkg;
   versionInstances.forEach((instance) => {
-    // if (instance.startsWith("/home/node/")) {
     scanPathScope.forEach((scope) => {
       if (instance.startsWith(scope)) {
         within = true;
       }
     });
-    // }
   });
   return within;
 };
@@ -189,9 +187,6 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
 
         const curVersionInstanceDetails = versionInstances.join("<br>");
 
-        // console.log("current instance");
-        // console.dir(curVersionInstanceDetails);
-
         const allInstanceDetails = allInstances.join("<br>");
 
         const graceDays = !pkg.graceDays ? undefined : parseInt(pkg.graceDays);
@@ -201,18 +196,13 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
-            console.log("grace days");
-            console.dir(graceDays);
-            console.log("----------");
-            console.log("instance");
+
+            console.log("::group::current instance with overdue grace period");
             console.dir(curVersionInstanceDetails);
-            console.log("----------");
-            console.log("current instance???");
-            console.log(curVersionInstanceDetails.startsWith("/home/node/"));
+            console.log("::endgroup::");
+
             if (curVersionInstanceDetails.startsWith("/home/node/")) {
               graceStatus = "failed";
-              console.log("grace status");
-              console.dir(graceStatus);
             }
           }
         }

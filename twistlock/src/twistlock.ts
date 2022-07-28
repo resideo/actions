@@ -140,8 +140,6 @@ export function* setupCli({
     }: ScanRepositoryParams): Generator<any, TwistlockCLI, any> {
       const output: FileResult = yield file();
 
-      console.log(`is an image: ${image}`);
-      console.log(`is a repository: ${repositoryPath}`);
       console.log("::group::scan");
       const twistCommand = !image
         ? `${cliPath} coderepo scan ` +
