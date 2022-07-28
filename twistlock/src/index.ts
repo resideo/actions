@@ -63,14 +63,23 @@ export function* run({
       scanPathScope,
     });
 
+    console.log("message");
+    console.dir(message);
+    console.log("graceStatus");
+    console.dir(graceStatus);
+
     console.log("::group::comment");
     console.dir(message);
     console.log("::endgroup::");
 
     finalMessage += message + "\n\n";
+
+    console.log("final comment");
+    console.dir(finalMessage);
+
     // trying to see if we even hit this in the mono
     if (graceStatus !== "pass") {
-      console.log("::group::warning");
+      console.log("graceStatus");
       console.log(`${graceStatus}`);
       core.setFailed(
         "One or more packages have an overdue security resolution."
