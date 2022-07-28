@@ -43,6 +43,7 @@ export function* run({
 
   let finalMessage = "";
 
+  console.log("Hello world?");
   core.setFailed("Manual failure");
 
   if (vulnerabilities) {
