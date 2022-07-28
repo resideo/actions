@@ -43,6 +43,8 @@ export function* run({
 
   let finalMessage = "";
 
+  core.setFailed("Manual failure");
+
   if (vulnerabilities) {
     const { message, graceStatus } = yield yarnWhyFormat({
       vulnerabilities,
