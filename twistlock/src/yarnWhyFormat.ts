@@ -201,8 +201,12 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
+            console.log("grace days");
+            console.dir(graceDays);
+            console.log("----------");
             console.log("instance");
             console.dir(curVersionInstanceDetails);
+            console.log("----------");
             console.log("current instance???");
             console.log(curVersionInstanceDetails.startsWith("/home/node/"));
             if (curVersionInstanceDetails.startsWith("/home/node/")) {
