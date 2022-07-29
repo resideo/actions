@@ -71,7 +71,7 @@ export function* run({
 
     if (graceStatus !== "pass") {
       core.setFailed(
-        "One or more packages have an overdue security resolution."
+        "Twistlock: One or more packages have an overdue security resolution."
       );
     }
   }
@@ -87,7 +87,9 @@ export function* run({
       2
     )}\n\`\`\``;
     finalMessage += message + "\n\n";
-    core.setFailed("One or more compliance issues have been flagged.");
+    core.setFailed(
+      "Twistlock: One or more compliance issues have been flagged."
+    );
   }
 
   if (finalMessage === "")
@@ -98,6 +100,6 @@ export function* run({
 
   if (code !== 0)
     core.warning(
-      `CLI exited with code ${code}. This implies there may be compliance issues.`
+      `Twistlock: CLI exited with code ${code}. This implies there may be compliance issues.`
     );
 }

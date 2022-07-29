@@ -200,9 +200,7 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
             vulnsList.push(curVersionInstanceDetails);
 
-            if (curVersionInstanceDetails.startsWith("/home/node/")) {
-              graceStatus = "failed";
-            }
+            if (!group.severity.startsWith("image")) graceStatus = "failed";
           }
         }
 
