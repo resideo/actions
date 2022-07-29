@@ -63,19 +63,13 @@ export function* run({
       scanPathScope,
     });
 
-    // console.log("graceStatus");
-    // console.dir(graceStatus);
-
     console.log("::group::comment");
     console.dir(message);
     console.log("::endgroup::");
 
     finalMessage += message + "\n\n";
 
-    // we never hit this even though i think we should be hitting it??
     if (graceStatus !== "pass") {
-      // console.log("graceStatus");
-      // console.log(`${graceStatus}`);
       core.setFailed(
         "One or more packages have an overdue security resolution."
       );
