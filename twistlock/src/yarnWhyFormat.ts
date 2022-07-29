@@ -170,12 +170,7 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
   const listOfDependencies = (group) => {
     const { packages } = group;
     const vulnsList: string[] = [];
-    console.log("vulnsList???", vulnsList);
-    console.log("::group::vulns with overdue grace period");
-    vulnsList.map((vuln) => {
-      console.dir(vuln);
-    });
-    console.log("::endgroup::");
+
     const packagesList = packages
       .map((pkg) => {
         const {
@@ -247,6 +242,13 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
         );
       })
       .join("");
+
+    console.log("vulnsList???", vulnsList);
+    console.log("::group::vulns with overdue grace period");
+    vulnsList.map((vuln) => {
+      console.dir(vuln);
+    });
+    console.log("::endgroup::");
 
     return [...packagesList];
   };
