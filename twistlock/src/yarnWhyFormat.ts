@@ -200,10 +200,6 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
             vulnsList.push(curVersionInstanceDetails);
 
-            // console.log("::group::vulns with overdue grace period");
-            // console.dir(curVersionInstanceDetails);
-            // console.log("::endgroup::");
-
             if (curVersionInstanceDetails.startsWith("/home/node/")) {
               graceStatus = "failed";
             }
@@ -250,6 +246,8 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
     });
     console.log("::endgroup::");
 
+    console.log("packages");
+    console.dir(packagesList);
     return [...packagesList];
   };
 
