@@ -33,13 +33,25 @@ export function* run({
     image,
   });
 
-  const vulnerabilities = !results.vulnerabilities
-    ? null
-    : results.vulnerabilities;
+  let vulnerabilities;
+  let packageList;
+  let compliances;
 
-  const packageList = !results.packages ? null : results.packages;
+  if (image) {
+    const res = results["results"];
 
-  const compliances = !results.compliances ? null : results.compliances;
+    vulnerabilities = !res[0].vulnerabilities ? null : res[0].vulnerabilities;
+
+    packageList = !res[0].packages ? null : res[0].packages;
+
+    compliances = !res[0].compliances ? null : res[0].compliances;
+  } else {
+    vulnerabilities = !results.vulnerabilities ? null : results.vulnerabilities;
+
+    packageList = !results.packages ? null : results.packages;
+
+    compliances = !results.compliances ? null : results.compliances;
+  }
 
   let finalMessage = "";
 
@@ -56,10 +68,12 @@ export function* run({
     console.log("::endgroup::");
 
     finalMessage += message + "\n\n";
-    if (graceStatus !== "pass")
+
+    if (graceStatus !== "pass") {
       core.setFailed(
-        "One or more packages have an overdue security resolution."
+        "Twistlock: One or more packages have an overdue security resolution."
       );
+    }
   }
 
   if (compliances) {
@@ -73,7 +87,9 @@ export function* run({
       2
     )}\n\`\`\``;
     finalMessage += message + "\n\n";
-    core.setFailed("One or more compliance issues have been flagged.");
+    core.setFailed(
+      "Twistlock: One or more compliance issues have been flagged."
+    );
   }
 
   if (finalMessage === "")
@@ -84,6 +100,6 @@ export function* run({
 
   if (code !== 0)
     core.warning(
-      `CLI exited with code ${code}. This implies there may be compliance issues.`
+      `Twistlock: CLI exited with code ${code}. This implies there may be compliance issues.`
     );
 }

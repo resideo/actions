@@ -76,10 +76,12 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
 
             vulns[pkg].forEach((vuln) => {
               const pkgToDisplay = vulnerabilities[vuln.index];
+
               pkgToDisplay.yarnWhy = messages;
-              pkgToDisplay.allInstances = packageInstances.map(
-                (instance) => `${instance.version} at ${instance.path}`
-              );
+              pkgToDisplay.allInstances = packageInstances.map((instance) => {
+                return `${instance.version} at ${instance.path}`;
+              });
+
               pkgToDisplay.versionInstances = packageInstances
                 .filter(
                   (instance) => instance.version === pkgToDisplay.packageVersion
@@ -167,7 +169,9 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
   let graceStatus = "pass";
   const listOfDependencies = (group) => {
     const { packages } = group;
-    return packages
+    const vulnsList: string[] = [];
+
+    const packagesList = packages
       .map((pkg) => {
         const {
           cvss,
@@ -194,6 +198,8 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
             graceCountdown = `⏳ ${graceDays} days left`;
           } else {
             graceCountdown = `⚠️ ${graceDays} days overdue`;
+            vulnsList.push(curVersionInstanceDetails);
+
             if (!group.severity.startsWith("image")) graceStatus = "failed";
           }
         }
@@ -230,6 +236,14 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
         );
       })
       .join("");
+
+    console.log("::group::vulns with overdue grace period");
+    vulnsList.map((vuln) => {
+      console.dir(vuln);
+    });
+    console.log("::endgroup::");
+
+    return packagesList;
   };
 
   const severityTable =
