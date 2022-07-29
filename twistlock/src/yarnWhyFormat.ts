@@ -248,7 +248,7 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
 
     console.log("packages");
     console.dir(packagesList);
-    return [...packagesList];
+    return packagesList;
   };
 
   const severityTable =
