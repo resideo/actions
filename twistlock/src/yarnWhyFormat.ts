@@ -13,10 +13,18 @@ export interface VulnerabilitiesCategorized {
   packages: VulnerabilityTagged[];
 }
 
-const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
-  console.log("::group::results");
-  console.dir(vulnerabilities);
-  console.log("::endgroup::");
+export const yarnWhyAll = function* ({
+  vulnerabilities,
+  packageList,
+  repositoryPath,
+  logging = true,
+  runYarnWhy = true,
+}) {
+  if (logging) {
+    console.log("::group::results");
+    console.dir(vulnerabilities);
+    console.log("::endgroup::");
+  }
 
   const vulns = vulnerabilities.reduce((acc, pkg, index) => {
     if (!acc[pkg.packageName]) acc[pkg.packageName] = [];
@@ -34,25 +42,27 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
         function* () {
           let messages: string[] = [];
           let errors: string[] = [];
-          const command = yield exec(`yarn why ${pkg}`, {
-            cwd: repositoryPath,
-          });
+          if (runYarnWhy) {
+            const command = yield exec(`yarn why ${pkg}`, {
+              cwd: repositoryPath,
+            });
 
-          yield spawn(
-            command.stdout.forEach((message) => {
-              // const messageStringified = message.toString().trim();
-              messages = [...messages, message.toString()];
-            })
-          );
-          yield spawn(
-            command.stderr.forEach((error) => {
-              const errorStringified = error.toString().trim();
-              if (errorStringified.match(/^error/i)) {
-                errors = [...errors, error.toString()];
-              }
-            })
-          );
-          yield command.join();
+            yield spawn(
+              command.stdout.forEach((message) => {
+                // const messageStringified = message.toString().trim();
+                messages = [...messages, message.toString()];
+              })
+            );
+            yield spawn(
+              command.stderr.forEach((error) => {
+                const errorStringified = error.toString().trim();
+                if (errorStringified.match(/^error/i)) {
+                  errors = [...errors, error.toString()];
+                }
+              })
+            );
+            yield command.join();
+          }
 
           // Twistlock may report npm packages that are not in yarn.lock.
           // Yarn is a good example of such a package.
@@ -104,7 +114,10 @@ const yarnWhyAll = function* (vulnerabilities, packageList, repositoryPath) {
   return { packagesToDisplay, packagesToSkip, skipPackageMessage };
 };
 
-const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
+export const withinPathScope = (
+  scanPathScope: string[],
+  pkg: VulnerabilityTagged
+) => {
   if (scanPathScope.length === 0) return true;
   let within = false;
   const { versionInstances } = pkg;
@@ -118,7 +131,7 @@ const withinPathScope = (scanPathScope: string[], pkg: VulnerabilityTagged) => {
   return within;
 };
 
-const sortAndCategorize = (
+export const sortAndCategorize = (
   afterYarnWhy,
   scanPathScope
 ): { severity: string; packages: VulnerabilityTagged[] }[] => {
@@ -237,11 +250,13 @@ const formatComment = ({ sorted, skipPackageMessage }) => {
       })
       .join("");
 
-    console.log("::group::vulns with overdue grace period");
-    vulnsList.map((vuln) => {
-      console.dir(vuln);
-    });
-    console.log("::endgroup::");
+    if (vulnsList.length > 0) {
+      console.log(`::group::${group.severity}vulns with overdue grace period`);
+      vulnsList.map((vuln) => {
+        console.dir(vuln);
+      });
+      console.log("::endgroup::");
+    }
 
     return packagesList;
   };
@@ -282,7 +297,7 @@ export function* yarnWhyFormat({
   }: {
     packagesToDisplay: VulnerabilityTagged[];
     skipPackageMessage: string;
-  } = yield yarnWhyAll(vulnerabilities, packageList, repositoryPath);
+  } = yield yarnWhyAll({ vulnerabilities, packageList, repositoryPath });
   const sorted: VulnerabilitiesCategorized[] = sortAndCategorize(
     packagesToDisplay,
     scanPathScope

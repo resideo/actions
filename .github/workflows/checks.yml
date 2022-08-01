@@ -29,3 +29,13 @@ jobs:
       - uses: volta-cli/action@v1
       - run: yarn
       - run: yarn problems
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: volta-cli/action@v1
+      - run: yarn
+      - run: yarn workspace @resideo/twistlock-action test
