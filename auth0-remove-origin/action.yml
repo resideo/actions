@@ -17,5 +17,5 @@ inputs:
     description: "The allowed web origin to remove"
     required: true
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'

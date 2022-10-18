@@ -23,5 +23,5 @@ inputs:
     description: "The allowed logout URL to add. Will fallback to origin if not provided"
     required: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
