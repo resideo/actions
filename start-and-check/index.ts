@@ -8,10 +8,21 @@ interface CommandExec {
 }
 
 function* run({ command, checkForLog }: CommandExec) {
+  console.log("command", command);
+  console.log("checkForLog", checkForLog);
   const startProcess = yield exec(command);
 
   yield spawn(
     startProcess.stdout.forEach((text: string) => console.log(text.toString()))
+  );
+
+  console.log(
+    "First yield spawn",
+    yield spawn(
+      startProcess.stdout.forEach((text: string) =>
+        console.log(text.toString())
+      )
+    )
   );
 
   yield spawn(
@@ -20,11 +31,28 @@ function* run({ command, checkForLog }: CommandExec) {
     )
   );
 
+  console.log(
+    "second yield spawn",
+    yield spawn(
+      startProcess.stderr.forEach((text: string) =>
+        console.error(text.toString())
+      )
+    )
+  );
+
+  console.log(
+    "yield spawn in try catch (logged outside of try catch)",
+    yield startProcess.stdout
+      .filter((chunk: any) => chunk.includes(checkForLog))
+      .expect()
+  );
+
   try {
     yield startProcess.stdout
       .filter((chunk: any) => chunk.includes(checkForLog))
       .expect();
   } catch (error) {
+    console.log("error", error);
     throw new MainError({
       message: `did not find the stdout text:
     ${checkForLog}`,
