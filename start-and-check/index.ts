@@ -25,7 +25,7 @@ function* run({ command, checkForLog }: CommandExec) {
   );
 
   yield startProcess.stdout.filter((chunk: any) => {
-    console.log("chunk in filter", chunk);
+    console.log("chunk in filter", chunk.toString());
     console.log(
       "does it include checkForLog in filter",
       chunk.includes(checkForLog)
