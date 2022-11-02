@@ -24,7 +24,7 @@ function* run({ command, checkForLog }: CommandExec) {
     )
   );
 
-  console.log("what is startProcess.stdout", yield spawn(startProcess.stdout));
+  console.log("what is startProcess.stdout", yield startProcess.stdout);
 
   console.log(
     "yield spawn in try catch (logged outside of try catch)",
