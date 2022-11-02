@@ -8,10 +8,7 @@ interface CommandExec {
 }
 
 function* run({ command, checkForLog }: CommandExec) {
-  console.log("checkForLog", checkForLog);
   const startProcess = yield exec(command);
-
-  console.log("startProcess", startProcess);
 
   yield spawn(
     startProcess.stdout.forEach((text: string) => console.log(text.toString()))
@@ -22,14 +19,6 @@ function* run({ command, checkForLog }: CommandExec) {
       console.error(text.toString())
     )
   );
-
-  yield startProcess.stdout.filter((chunk: any) => {
-    console.log("RESULT: chunk in filter", chunk.toString());
-    console.log(
-      "does it include checkForLog in filter",
-      chunk.includes("Starting server...")
-    );
-  });
 
   try {
     if (command.includes("graphql-federated-gateway")) {
@@ -42,7 +31,6 @@ function* run({ command, checkForLog }: CommandExec) {
         .expect();
     }
   } catch (error) {
-    console.log("error", error);
     throw new MainError({
       message: `did not find the stdout text:
     ${checkForLog}`,
