@@ -16,15 +16,6 @@ function* run({ command, checkForLog }: CommandExec) {
     startProcess.stdout.forEach((text: string) => console.log(text.toString()))
   );
 
-  console.log(
-    "First yield spawn",
-    yield spawn(
-      startProcess.stdout.forEach((text: string) =>
-        console.log(text.toString())
-      )
-    )
-  );
-
   yield spawn(
     startProcess.stderr.forEach((text: string) =>
       console.error(text.toString())
@@ -32,19 +23,13 @@ function* run({ command, checkForLog }: CommandExec) {
   );
 
   console.log(
-    "second yield spawn",
-    yield spawn(
-      startProcess.stderr.forEach((text: string) =>
-        console.error(text.toString())
-      )
-    )
+    "what is startProcess.stdout",
+    JSON.stringify(startProcess.stdout)
   );
 
   console.log(
     "yield spawn in try catch (logged outside of try catch)",
-    yield startProcess.stdout
-      .filter((chunk: any) => chunk.includes(checkForLog))
-      .expect()
+    yield startProcess.stdout.filter((chunk: any) => chunk).expect()
   );
 
   try {
