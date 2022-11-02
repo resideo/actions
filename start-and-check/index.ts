@@ -24,7 +24,12 @@ function* run({ command, checkForLog }: CommandExec) {
     )
   );
 
-  console.log("what is startProcess.stdout", yield startProcess.stdout);
+  console.log(
+    "what is startProcess.stdout",
+    yield startProcess.stdout.forEach((chunk: any) => {
+      console.log("chunk in for each", chunk);
+    })
+  );
 
   console.log(
     "startProcess stdout filter",
