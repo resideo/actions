@@ -28,13 +28,11 @@ function* run({ command, checkForLog }: CommandExec) {
 
   console.log(
     "startProcess stdout filter",
-    yield startProcess.stdout.filter((chunk: any) => chunk)
+    yield startProcess.stdout.filter((chunk: any) =>
+      console.log("chunk", chunk)
+    )
   );
 
-  console.log(
-    "startProcess stdout forEach",
-    yield startProcess.stdout.forEach((text: any) => text)
-  );
   console.log(
     "yield spawn in try catch (logged outside of try catch)",
     yield startProcess.stdout
