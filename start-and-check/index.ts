@@ -28,9 +28,10 @@ function* run({ command, checkForLog }: CommandExec) {
 
   console.log(
     "startProcess stdout filter",
-    yield startProcess.stdout.filter((chunk: any) =>
-      console.log("chunk", chunk)
-    )
+    yield startProcess.stdout.filter((chunk: any) => {
+      console.log("chunk", chunk);
+      console.log("does it include checkForLog", chunk.includes(checkForLog));
+    })
   );
 
   console.log(
