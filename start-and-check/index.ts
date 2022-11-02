@@ -8,7 +8,6 @@ interface CommandExec {
 }
 
 function* run({ command, checkForLog }: CommandExec) {
-  console.log("command", command);
   console.log("checkForLog", checkForLog);
   const startProcess = yield exec(command);
 
@@ -25,19 +24,12 @@ function* run({ command, checkForLog }: CommandExec) {
   );
 
   yield startProcess.stdout.filter((chunk: any) => {
-    console.log("chunk in filter", chunk.toString());
+    console.log("RESULT: chunk in filter", chunk.toString());
     console.log(
       "does it include checkForLog in filter",
-      chunk.includes(checkForLog)
+      chunk.includes("Starting server...")
     );
   });
-
-  console.log(
-    "yield spawn in try catch (logged outside of try catch)",
-    yield startProcess.stdout
-      .filter((chunk: any) => chunk.includes(checkForLog))
-      .expect()
-  );
 
   try {
     yield startProcess.stdout
