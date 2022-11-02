@@ -32,9 +32,15 @@ function* run({ command, checkForLog }: CommandExec) {
   });
 
   try {
-    yield startProcess.stdout
-      .filter((chunk: any) => chunk.includes(checkForLog))
-      .expect();
+    if (command.includes("graphql-federated-gateway")) {
+      yield startProcess.stdout
+        .filter((chunk: any) => chunk.includes("Starting server..."))
+        .expect();
+    } else {
+      yield startProcess.stdout
+        .filter((chunk: any) => chunk.includes(checkForLog))
+        .expect();
+    }
   } catch (error) {
     console.log("error", error);
     throw new MainError({
