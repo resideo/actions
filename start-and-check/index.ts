@@ -24,20 +24,13 @@ function* run({ command, checkForLog }: CommandExec) {
     )
   );
 
-  console.log(
-    "what is startProcess.stdout",
-    yield startProcess.stdout.forEach((chunk: any) => {
-      console.log("chunk in for each", chunk);
-    })
-  );
-
-  console.log(
-    "startProcess stdout filter",
-    yield startProcess.stdout.filter((chunk: any) => {
-      console.log("chunk", chunk);
-      console.log("does it include checkForLog", chunk.includes(checkForLog));
-    })
-  );
+  yield startProcess.stdout.filter((chunk: any) => {
+    console.log("chunk in filter", chunk);
+    console.log(
+      "does it include checkForLog in filter",
+      chunk.includes(checkForLog)
+    );
+  });
 
   console.log(
     "yield spawn in try catch (logged outside of try catch)",
