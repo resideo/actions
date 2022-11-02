@@ -12,6 +12,8 @@ function* run({ command, checkForLog }: CommandExec) {
   console.log("checkForLog", checkForLog);
   const startProcess = yield exec(command);
 
+  console.log("startProcess", startProcess);
+
   yield spawn(
     startProcess.stdout.forEach((text: string) => console.log(text.toString()))
   );
