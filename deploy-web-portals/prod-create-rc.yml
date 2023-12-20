@@ -1,0 +1,61 @@
+name: Prod - Create Release Candidate
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+
+jobs:
+  prod-create-rc:
+    name: Prod - Create Release Candidate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+
+      - uses: volta-cli/action@v1
+
+      - name: Set RC Branch Name
+        run: echo "rc_branch=$(date +release/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
+
+      - name: Create RC Branch 🛠
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git fetch --all --unshallow
+          git checkout stage
+          git pull
+          git checkout master
+          git checkout -b ${{ env.rc_branch }}
+          git merge stage
+          git push --set-upstream origin ${{ env.rc_branch }}
+
+      - name: Generate Pull Request Body
+        run: |
+          echo "👑 *An automated PR to merge stage to master* 👑" > pr_msg
+
+      - name: Get Pull Request Body
+        id: vars
+        run: echo ::set-output name=pr_body::$(cat pr_msg)
+
+      - name: Create Pull Request 🛠
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: ${{ env.rc_branch }}
+          destination_branch: 'master'
+          pr_title: '(Prod) ${{ env.rc_branch }} '
+          pr_body: ${{ steps.vars.outputs.pr_body }}
+          pr_label: 'Prod Release'
+
+      - name: Get Pull Request Number
+        id: pr-number
+        run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+
+      - name: Comment on Pull Request
+        id: pr-comment
+        run: |
+          gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
