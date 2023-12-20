@@ -1,0 +1,4 @@
+{
+  "extends": "@resideo/tsconfig",
+  "exclude": ["node_modules/", "dist"]
+}
