@@ -61,4 +61,4 @@ jobs:
       - name: Comment on Pull Request
         id: pr-comment
         run: |
-          gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body `Merge this PR manually by selecting "**Create a merge commit**"" *not* "Squash and merge"`
+          gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**'' *not* 'Squash and merge'"
