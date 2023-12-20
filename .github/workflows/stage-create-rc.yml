@@ -3,6 +3,9 @@ name: Stage - Create Release Candidate (RCS)
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      BOT_TOKEN:
+        required: true
 
 env:
   GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
