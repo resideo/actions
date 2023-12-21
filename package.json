@@ -8,6 +8,7 @@
       "auth0-remove-origin",
       "twistlock",
       "start-and-check",
+      "web-create-release-pr",
       "core/*"
     ]
   },
