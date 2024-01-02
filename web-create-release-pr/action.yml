@@ -18,9 +18,8 @@ inputs:
 
 runs:
   using: "composite"
-  jobs:
-    create-rc:
-      name: Create Release Candidate
+  steps:
+    - name: Create Release Candidate
       runs-on: ubuntu-latest
       steps:
         - name: Checkout 🛎️
