@@ -16,9 +16,6 @@ inputs:
   BOT_TOKEN:
     required: true
 
-env:
-  GITHUB_TOKEN: ${{ inputs.BOT_TOKEN }}
-
 jobs:
   create-rc:
     name: Create Release Candidate
@@ -26,8 +23,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-                with:
-          token: ${{ inputs.BOT_TOKEN }}
+          with:
+            token: ${{ inputs.BOT_TOKEN }}
 
       - uses: volta-cli/action@v1
 
