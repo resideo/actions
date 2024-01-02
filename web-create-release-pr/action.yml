@@ -13,8 +13,9 @@ inputs:
   pr-label:
     required: true
     type: string
-  BOT_TOKEN:
-    required: true
+  github-token:
+    description: 'GITHUB_TOKEN'
+    default: '${{ github.token }}'
 
 runs:
   using: "composite"
@@ -22,7 +23,7 @@ runs:
     - name: Checkout 🛎️
       uses: actions/checkout@v3
       with:
-        token: ${{ inputs.BOT_TOKEN }}
+        token: ${{ inputs.github-token }}
 
     - uses: volta-cli/action@v1
 
