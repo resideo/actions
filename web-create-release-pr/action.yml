@@ -1,25 +1,23 @@
 name: Create Release Candidate
 
-on:
-  workflow_call:
-    inputs:
-      from-branch:
-        required: true
-        type: string
-      to-branch:
-        required: true
-        type: string
-      rc-branch-prefix:
-        required: true
-        type: string
-      pr-label:
-        required: true
-        type: string
-      BOT_TOKEN:
-        required: true
+inputs:
+  from-branch:
+    required: true
+    type: string
+  to-branch:
+    required: true
+    type: string
+  rc-branch-prefix:
+    required: true
+    type: string
+  pr-label:
+    required: true
+    type: string
+  BOT_TOKEN:
+    required: true
 
 env:
-  GITHUB_TOKEN: ${{ github.event.inputs.BOT_TOKEN }}
+  GITHUB_TOKEN: ${{ inputs.BOT_TOKEN }}
 
 jobs:
   create-rc:
@@ -29,28 +27,28 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
                 with:
-          token: ${{ github.event.inputs.BOT_TOKEN }}
+          token: ${{ inputs.BOT_TOKEN }}
 
       - uses: volta-cli/action@v1
 
       - name: Set RC Branch Name
-        run: echo "rc_branch=$(date +${{ github.event.inputs.rc-branch-prefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
+        run: echo "rc_branch=$(date +${{ inputs.rc-branch-prefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
 
       - name: Create RC Branch 🛠
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
           git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
           git fetch --all --unshallow
-          git checkout ${{ github.event.inputs.from-branch }}
+          git checkout ${{ inputs.from-branch }}
           git pull
-          git checkout ${{ github.event.inputs.to-branch }}
+          git checkout ${{ inputs.to-branch }}
           git checkout -b ${{ env.rc_branch }}
-          git merge ${{ github.event.inputs.from-branch }}
+          git merge ${{ inputs.from-branch }}
           git push --set-upstream origin ${{ env.rc_branch }}
 
       - name: Generate Pull Request Body
         run: |
-          echo "👑 An automated PR to merge *${{ github.event.inputs.from-branch }}* to *${{ inputs.to-branch }}* 👑" > pr_msg
+          echo "👑 An automated PR to merge *${{ inputs.from-branch }}* to *${{ inputs.to-branch }}* 👑" > pr_msg
 
       - name: Get Pull Request Body
         id: vars
@@ -60,10 +58,10 @@ jobs:
         uses: repo-sync/pull-request@v2
         with:
           source_branch: ${{ env.rc_branch }}
-          destination_branch: ${{ github.event.inputs.to-branch }}
+          destination_branch: ${{ inputs.to-branch }}
           pr_title: '(Stage) ${{ env.rc_branch }} '
           pr_body: ${{ steps.vars.outputs.pr_body }}
-          pr_label: ${{ github.event.inputs.pr-label }}
+          pr_label: ${{ inputs.pr-label }}
 
       - name: Get Pull Request Number
         id: pr-number
