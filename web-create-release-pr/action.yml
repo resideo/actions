@@ -27,6 +27,7 @@ runs:
     - uses: volta-cli/action@v1
 
     - name: Set RC Branch Name
+      shell: bash
       run: echo "rc_branch=$(date +${{ inputs.rc-branch-prefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
 
     - name: Create RC Branch 🛠
@@ -42,11 +43,13 @@ runs:
         git push --set-upstream origin ${{ env.rc_branch }}
 
     - name: Generate Pull Request Body
+      shell: bash
       run: |
         echo "👑 An automated PR to merge *${{ inputs.from-branch }}* to *${{ inputs.to-branch }}* 👑" > pr_msg
 
     - name: Get Pull Request Body
       id: vars
+      shell: bash
       run: echo ::set-output name=pr_body::$(cat pr_msg)
 
     - name: Create Pull Request 🛠
@@ -60,9 +63,11 @@ runs:
 
     - name: Get Pull Request Number
       id: pr-number
+      shell: bash
       run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
 
     - name: Comment on Pull Request
       id: pr-comment
+      shell: bash
       run: |
         gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
