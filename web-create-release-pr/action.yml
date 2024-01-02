@@ -15,12 +15,11 @@ on:
       pr-label:
         required: true
         type: string
-    secrets:
       BOT_TOKEN:
         required: true
 
 env:
-  GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+  GITHUB_TOKEN: ${{ inputs.BOT_TOKEN }}
 
 jobs:
   create-rc:
@@ -29,8 +28,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.BOT_TOKEN }}
+                with:
+          token: ${{ inputs.BOT_TOKEN }}
 
       - uses: volta-cli/action@v1
 
@@ -73,4 +72,4 @@ jobs:
       - name: Comment on Pull Request
         id: pr-comment
         run: |
-          gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**'' *not* 'Squash and merge'"
+          gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
