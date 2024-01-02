@@ -19,53 +19,50 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Create Release Candidate
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout 🛎️
-          uses: actions/checkout@v3
-          with:
-            token: ${{ inputs.BOT_TOKEN }}
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.BOT_TOKEN }}
 
-        - uses: volta-cli/action@v1
+    - uses: volta-cli/action@v1
 
-        - name: Set RC Branch Name
-          run: echo "rc_branch=$(date +${{ inputs.rc-branch-prefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
+    - name: Set RC Branch Name
+      run: echo "rc_branch=$(date +${{ inputs.rc-branch-prefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
 
-        - name: Create RC Branch 🛠
-          run: |
-            git config --global user.name "${GITHUB_ACTOR}"
-            git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
-            git fetch --all --unshallow
-            git checkout ${{ inputs.from-branch }}
-            git pull
-            git checkout ${{ inputs.to-branch }}
-            git checkout -b ${{ env.rc_branch }}
-            git merge ${{ inputs.from-branch }}
-            git push --set-upstream origin ${{ env.rc_branch }}
+    - name: Create RC Branch 🛠
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+        git fetch --all --unshallow
+        git checkout ${{ inputs.from-branch }}
+        git pull
+        git checkout ${{ inputs.to-branch }}
+        git checkout -b ${{ env.rc_branch }}
+        git merge ${{ inputs.from-branch }}
+        git push --set-upstream origin ${{ env.rc_branch }}
 
-        - name: Generate Pull Request Body
-          run: |
-            echo "👑 An automated PR to merge *${{ inputs.from-branch }}* to *${{ inputs.to-branch }}* 👑" > pr_msg
+    - name: Generate Pull Request Body
+      run: |
+        echo "👑 An automated PR to merge *${{ inputs.from-branch }}* to *${{ inputs.to-branch }}* 👑" > pr_msg
 
-        - name: Get Pull Request Body
-          id: vars
-          run: echo ::set-output name=pr_body::$(cat pr_msg)
+    - name: Get Pull Request Body
+      id: vars
+      run: echo ::set-output name=pr_body::$(cat pr_msg)
 
-        - name: Create Pull Request 🛠
-          uses: repo-sync/pull-request@v2
-          with:
-            source_branch: ${{ env.rc_branch }}
-            destination_branch: ${{ inputs.to-branch }}
-            pr_title: '(Stage) ${{ env.rc_branch }} '
-            pr_body: ${{ steps.vars.outputs.pr_body }}
-            pr_label: ${{ inputs.pr-label }}
+    - name: Create Pull Request 🛠
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: ${{ env.rc_branch }}
+        destination_branch: ${{ inputs.to-branch }}
+        pr_title: '(Stage) ${{ env.rc_branch }} '
+        pr_body: ${{ steps.vars.outputs.pr_body }}
+        pr_label: ${{ inputs.pr-label }}
 
-        - name: Get Pull Request Number
-          id: pr-number
-          run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+    - name: Get Pull Request Number
+      id: pr-number
+      run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
 
-        - name: Comment on Pull Request
-          id: pr-comment
-          run: |
-            gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
+    - name: Comment on Pull Request
+      id: pr-comment
+      run: |
+        gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
