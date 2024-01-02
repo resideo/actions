@@ -17,10 +17,8 @@ jobs:
   create-release-pr:
     uses: resideo/actions/web-create-release-pr@master
     with:
-      from-branch: stage
-      to-branch: master
-      rc-branch-prefix: release
-      pr-label: Prod Release
-    secrets:
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      fromBranch: stage
+      toBranch: master
+      rcBranchPrefix: release
+      prLabel: Prod Release
 ```
