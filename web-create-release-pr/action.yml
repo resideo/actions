@@ -13,8 +13,12 @@ inputs:
     description: 'RC branch prefix name. Ex: stage-release'
     required: true
     type: string
+  prTitleHeader:
+    description: 'Pull request header. Ex: (Stage)'
+    required: true
+    type: string
   prLabel:
-    description: 'Pull request label. Ex: STAGE RELEASE'
+    description: 'Pull request label. Ex: Stage Release'
     required: true
     type: string
   githubToken:
@@ -61,7 +65,7 @@ runs:
       with:
         source_branch: ${{ env.rc_branch }}
         destination_branch: ${{ inputs.toBranch }}
-        pr_title: '(Stage) ${{ env.rc_branch }} '
+        pr_title: '${{ inputs.prTitleHeader }} ${{ env.rc_branch }} '
         pr_body: ${{ steps.vars.outputs.pr_body }}
         pr_label: ${{ inputs.prLabel }}
 
