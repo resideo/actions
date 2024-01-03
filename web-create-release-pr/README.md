@@ -20,5 +20,6 @@ jobs:
       fromBranch: stage
       toBranch: master
       rcBranchPrefix: release
+      prTitleHeader: (Prod)
       prLabel: Prod Release
 ```
