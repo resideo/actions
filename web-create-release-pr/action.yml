@@ -1,0 +1,77 @@
+name: Create Release Candidate
+
+inputs:
+  fromBranch:
+    description: 'Source branch name. Ex: develop'
+    required: true
+    type: string
+  toBranch:
+    description: 'Destination branch name. Ex: stage'
+    required: true
+    type: string
+  rcBranchPrefix:
+    description: 'RC branch prefix name. Ex: stage-release'
+    required: true
+    type: string
+  prLabel:
+    description: 'Pull request label. Ex: STAGE RELEASE'
+    required: true
+    type: string
+  githubToken:
+    description: 'GITHUB_TOKEN'
+    default: '${{ github.token }}'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v3
+      with:
+        token: ${{ inputs.githubToken }}
+
+    - uses: volta-cli/action@v1
+
+    - name: Set RC Branch Name
+      shell: bash
+      run: echo "rc_branch=$(date +${{ inputs.rcBranchPrefix }}/%Y.%m.%d.%H%M)" >> $GITHUB_ENV
+
+    - name: Create RC Branch 🛠
+      shell: bash
+      run: |
+        git fetch --all --unshallow
+        git checkout ${{ inputs.fromBranch }}
+        git pull
+        git checkout ${{ inputs.toBranch }}
+        git checkout -b ${{ env.rc_branch }}
+        git merge ${{ inputs.fromBranch }}
+        git push --set-upstream origin ${{ env.rc_branch }}
+
+    - name: Generate Pull Request Body
+      shell: bash
+      run: |
+        echo "👑 An automated PR to merge *${{ inputs.fromBranch }}* to *${{ inputs.toBranch }}* 👑" > pr_msg
+
+    - name: Get Pull Request Body
+      id: vars
+      shell: bash
+      run: echo ::set-output name=pr_body::$(cat pr_msg)
+
+    - name: Create Pull Request 🛠
+      uses: repo-sync/pull-request@v2
+      with:
+        source_branch: ${{ env.rc_branch }}
+        destination_branch: ${{ inputs.toBranch }}
+        pr_title: '(Stage) ${{ env.rc_branch }} '
+        pr_body: ${{ steps.vars.outputs.pr_body }}
+        pr_label: ${{ inputs.prLabel }}
+
+    - name: Get Pull Request Number
+      id: pr-number
+      shell: bash
+      run: echo "pull_request_number=$(gh pr view --json number -q .number || echo "")" >> $GITHUB_OUTPUT
+
+    - name: Comment on Pull Request
+      id: pr-comment
+      shell: bash
+      run: |
+        gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Merge this PR manually by selecting '**Create a merge commit**' *not* 'Squash and merge'"
