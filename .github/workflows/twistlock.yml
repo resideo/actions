@@ -14,8 +14,7 @@ jobs:
       - uses: ./twistlock
         continue-on-error: true
         with:
-          project: Titan-QA
-          consoleURL: https://twistlock.cloud.resideo.com
+          consoleURL: https://us-east1.cloud.twistlock.com/us-1-113032316
           username: ${{ secrets.TEMP_TWISTCLI_USERNAME }}
           password: ${{ secrets.TEMP_TWISTCLI_PASSWORD }}
         env:

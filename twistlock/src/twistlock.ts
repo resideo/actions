@@ -43,7 +43,6 @@ export interface TwistlockRun {
   password?: string;
   token?: string;
   consoleUrl: string;
-  project: string;
   repositoryPath: string;
   image: string;
   githubComment: boolean;
@@ -83,7 +82,6 @@ interface DownloadCliParams {
   password?: string;
   token?: string;
   consoleUrl: string;
-  project: string;
 }
 
 interface ScanRepositoryParams {
@@ -108,7 +106,6 @@ export function* setupCli({
   password,
   token,
   consoleUrl,
-  project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   if (!token) {
     if (!user || !password)
@@ -143,7 +140,6 @@ export function* setupCli({
       console.log("::group::scan");
       const twistCommand = !image
         ? `${cliPath} coderepo scan ` +
-          `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
           `--user "${user}" ` +
           `--password "${password}" ` +
@@ -159,7 +155,6 @@ export function* setupCli({
           `--output-file "${output.path}" ` +
           `${repositoryPath}`
         : `${cliPath} images scan ` +
-          `--project "${project}" ` +
           `--address "${consoleUrl}" ` +
           `--user "${user}" ` +
           `--password "${password}" ` +
