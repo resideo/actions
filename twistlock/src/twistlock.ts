@@ -43,7 +43,6 @@ export interface TwistlockRun {
   password?: string;
   token?: string;
   consoleUrl: string;
-  project: string;
   repositoryPath: string;
   image: string;
   githubComment: boolean;
@@ -83,7 +82,6 @@ interface DownloadCliParams {
   password?: string;
   token?: string;
   consoleUrl: string;
-  project: string;
 }
 
 interface ScanRepositoryParams {
@@ -108,7 +106,6 @@ export function* setupCli({
   password,
   token,
   consoleUrl,
-  project,
 }: DownloadCliParams): Generator<any, SetupCliReturn, any> {
   if (!token) {
     if (!user || !password)
