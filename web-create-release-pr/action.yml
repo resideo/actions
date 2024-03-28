@@ -50,7 +50,7 @@ runs:
         git checkout ${{ inputs.toBranch }}
         git checkout -b ${{ env.rc_branch }}
         git checkout ${{ inputs.fromBranch }} -- yarn.lock
-        git merge ${{ inputs.fromBranch }}
+        git merge -s recursive ${{ inputs.fromBranch }}
         git push --set-upstream origin ${{ env.rc_branch }}
 
     - name: Generate Pull Request Body
