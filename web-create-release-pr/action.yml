@@ -49,6 +49,7 @@ runs:
         git pull
         git checkout ${{ inputs.toBranch }}
         git checkout -b ${{ env.rc_branch }}
+        yarn install --ignore-scripts
         git merge ${{ inputs.fromBranch }}
         git push --set-upstream origin ${{ env.rc_branch }}
 
