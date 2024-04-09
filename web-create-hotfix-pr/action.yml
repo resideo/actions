@@ -1,4 +1,4 @@
-name: Create Release Candidate
+name: Create Hotfix Release Candidate
 
 inputs:
   fromBranch:
@@ -37,23 +37,24 @@ runs:
 
     - name: Set RC Branch Name
       shell: bash
-      run: echo "rc_branch=$(date +stage-release/hotfix-%Y.%m.%d.%H%M)" >> $GITHUB_ENV
+      run: echo "rc_branch=$(date +${{ inputs.rcBranchPrefix }}-%Y.%m.%d.%H%M)" >> $GITHUB_ENV
 
-    - name: Create Stage Hotfix RC Branch 🛠
-        run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
-          git fetch --all --unshallow
-          git checkout stage
-          git pull
-          git checkout -b ${{ env.rc_branch }}
-          git cherry-pick ${{ github.sha }}
-          git push --set-upstream origin ${{ env.rc_branch }}
+    - name: Create ${{ inputs.toBranch }} Hotfix RC Branch 🛠
+      shell: bash
+      run: |
+        git config --global user.name "${GITHUB_ACTOR}"
+        git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+        git fetch --all --unshallow
+        git checkout ${{ inputs.toBranch }}
+        git pull
+        git checkout -b ${{ env.rc_branch }}
+        git cherry-pick ${{ github.sha }}
+        git push --set-upstream origin ${{ env.rc_branch }}
 
     - name: Generate Pull Request Body
       shell: bash
       run: |
-        echo "👑 *An automated PR to cherry-pick hotfix to stage* 👑" > pr_msg
+        echo "👑 An automated PR to cherry-pick hotfix from *${{ inputs.fromBranch }}* to *${{ inputs.toBranch }}* 👑" > pr_msg
 
     - name: Get Pull Request Body
       id: vars
