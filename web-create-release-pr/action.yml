@@ -2,28 +2,28 @@ name: Create Release Candidate
 
 inputs:
   fromBranch:
-    description: 'Source branch name. Ex: develop'
+    description: "Source branch name. Ex: develop"
     required: true
     type: string
   toBranch:
-    description: 'Destination branch name. Ex: stage'
+    description: "Destination branch name. Ex: stage"
     required: true
     type: string
   rcBranchPrefix:
-    description: 'RC branch prefix name. Ex: stage-release'
+    description: "RC branch prefix name. Ex: stage-release"
     required: true
     type: string
   prTitleHeader:
-    description: 'Pull request header. Ex: (Stage)'
+    description: "Pull request header. Ex: (Stage)"
     required: true
     type: string
   prLabel:
-    description: 'Pull request label. Ex: Stage Release'
+    description: "Pull request label. Ex: Stage Release"
     required: true
     type: string
   githubToken:
-    description: 'GITHUB_TOKEN'
-    default: '${{ github.token }}'
+    description: "GITHUB_TOKEN"
+    default: "${{ github.token }}"
 
 runs:
   using: "composite"
@@ -45,6 +45,7 @@ runs:
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
         git fetch --all --unshallow
+        git checkout ${{ inputs.fromBranch }}
         git pull
         git checkout -b ${{ env.rc_branch }}
         git push --set-upstream origin ${{ env.rc_branch }}
@@ -64,7 +65,7 @@ runs:
       with:
         source_branch: ${{ env.rc_branch }}
         destination_branch: ${{ inputs.toBranch }}
-        pr_title: '${{ inputs.prTitleHeader }} ${{ env.rc_branch }} '
+        pr_title: "${{ inputs.prTitleHeader }} ${{ env.rc_branch }} "
         pr_body: ${{ steps.vars.outputs.pr_body }}
         pr_label: ${{ inputs.prLabel }}
 
