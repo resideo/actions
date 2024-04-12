@@ -45,6 +45,7 @@ runs:
         git config --global user.name "${GITHUB_ACTOR}"
         git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
         git fetch --all --unshallow
+        git checkout {{ inputs.fromBranch }}
         git pull
         git checkout -b ${{ env.rc_branch }}
         git push --set-upstream origin ${{ env.rc_branch }}
