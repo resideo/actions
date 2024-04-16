@@ -79,4 +79,4 @@ runs:
       id: pr-comment
       shell: bash
       run: |
-        gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Please use 'Squash and merge' for this PR"
+        gh pr comment ${{ steps.pr-number.outputs.pull_request_number }} --body "Please use 'Merge commit' for this PR"
