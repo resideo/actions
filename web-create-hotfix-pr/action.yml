@@ -10,15 +10,15 @@ inputs:
     required: true
     type: string
   rcBranchPrefix:
-    description: 'RC branch prefix name. Ex: stage-release'
+    description: 'RC branch prefix name. Ex: stage-release/hotfix'
     required: true
     type: string
   prTitleHeader:
-    description: 'Pull request header. Ex: (Stage)'
+    description: 'Pull request header. Ex: (Stage) (Hotfix)'
     required: true
     type: string
   prLabel:
-    description: 'Pull request label. Ex: Stage Release'
+    description: 'Pull request label. Ex: Hotfix,Stage Release'
     required: true
     type: string
   githubToken:
