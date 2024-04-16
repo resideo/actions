@@ -48,7 +48,7 @@ runs:
         git checkout ${{ inputs.toBranch }}
         git pull
         git checkout -b ${{ env.rc_branch }}
-        git cherry-pick ${{ github.sha }}
+        git cherry-pick -m 1 ${{ github.sha }}
         git push --set-upstream origin ${{ env.rc_branch }}
 
     - name: Generate Pull Request Body
