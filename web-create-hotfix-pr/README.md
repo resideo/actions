@@ -18,7 +18,7 @@ jobs:
   stage-hotfix-rc:
     name: Stage - Create Hotfix Release Candidate
     if: |
-      github.event.pull_request.merged == true && (contains(github.head_ref, 'hotfix/') || contains(github.event.pull_request.labels.*.name, 'hotfix') || contains(github.event.pull_request.labels.*.name, 'Hotfix'))
+      github.event.pull_request.merged == true && (contains(github.head_ref, 'hotfix/') || contains(github.event.pull_request.labels.*.name, 'Hotfix'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/web-create-hotfix-pr@master
