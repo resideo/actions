@@ -20,10 +20,9 @@ jobs:
       - run: yarn install
       - uses: resideo/actions/twistlock@master
         with:
-          project: Titan-QA
-          consoleURL: https://twistlock.cloud.resideo.com
-          username: ${{ secrets.TWISTLOCK_USERNAME }}
-          password: ${{ secrets.TWISTLOCK_PASSWORD }}
+          consoleURL: https://us-east1.cloud.twistlock.com/us-1-113032316
+          username: ${{ secrets.TWISTLOCK_CLOUD_USERNAME }}
+          password: ${{ secrets.TWISTLOCK_CLOUD_PASSWORD }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -46,10 +45,9 @@ jobs:
     - run: yarn install
     - uses: resideo/actions/twistlock@master
       with:
-        project: Titan-QA
-        consoleURL: https://twistlock.cloud.resideo.com
-        username: ${{ secrets.TWISTLOCK_USERNAME }}
-        password: ${{ secrets.TWISTLOCK_PASSWORD }}
+        consoleURL: https://us-east1.cloud.twistlock.com/us-1-113032316
+        username: ${{ secrets.TWISTLOCK_CLOUD_USERNAME }}
+        password: ${{ secrets.TWISTLOCK_CLOUD_PASSWORD }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
@@ -74,8 +72,7 @@ jobs:
       - name: Run Twistlock
         uses: resideo/actions/twistlock@master
         with:
-          project: Titan-QA
-          consoleURL: https://twistlock.cloud.resideo.com
+          consoleURL: https://us-east1.cloud.twistlock.com/us-1-113032316
           username: ${{ secrets.TEMP_TWISTCLI_USERNAME }}
           password: ${{ secrets.TEMP_TWISTCLI_PASSWORD }}
           image: node:14

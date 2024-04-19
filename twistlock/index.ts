@@ -18,7 +18,6 @@ main(
     password: core.getInput("password"),
     token: core.getInput("twistToken"),
     consoleUrl: core.getInput("consoleURL"),
-    project: core.getInput("project"),
     repositoryPath:
       core.getInput("repositoryPath") || process.env.GITHUB_WORKSPACE || ".",
     image: core.getInput("image"),
